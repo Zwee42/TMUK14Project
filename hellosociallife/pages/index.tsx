@@ -1,9 +1,7 @@
 
-
-
 export default function Home() {
 
-  const arr = [1, 2, 3, 4, 5];
+  const arr = [1, 2, 3, 4, 5,33];
 
 
   return (
@@ -13,7 +11,7 @@ export default function Home() {
       ))}
 
       <p className="text-center">
-        HEJ
+        HEJ Oliver
       </p>
     </div> 
   );

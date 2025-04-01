@@ -1,9 +1,7 @@
-
-
 export default function Home() {
     return (
       <p>
-        Här loggar du in
+        Här gör vi konton 
       </p>   
     );
   }
