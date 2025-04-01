@@ -1,12 +1,12 @@
-# TBD
+# Hello social life (HSL)
 
 ## Group Members
-| Name            | GitHub Handle    |
-|----------------|----------------|
-| Oliver Fiala   | https://github.com/Zwee42  |
-| Maria Birtman      | https://github.com/diexiy   |
-| Leyla Al Sheikha     | https://github.com/LeylaAl1   |
-| Rahaf Jomaa      | https://github.com/Rahaf021   |
+| Name              | GitHub Handle                |
+|-------------------|------------------------------|
+| Oliver Fiala      | https://github.com/Zwee42    |
+| Maria Birtman     | https://github.com/diexiy    |
+| Leyla Al Sheikha  | https://github.com/LeylaAl1  |
+| Rahaf Jomaa       | https://github.com/Rahaf021  |
 
 ## Declaration
 
@@ -22,13 +22,10 @@ AAAAAAAAAAAAAAAAAAAa
 
 ## Project Plan
 ### What will we implement?
-We plan to develop a **Web**, which will provide **TBD**. This project aims to **TBD**.
+We plan to develop a website where you can chat and interact with other people using text voice and perhaps video.
 
 ### How will it work?
-The application will function by **TBD**, allowing users to **TBD**. The core architecture will include **TBD**.
-
-### Features
-- **Feature 1** - TBD
+The application will be hosted as a website where users can create accounts and interact with eachother.
 
 ### Technologies Used
 - **Languages:** Typescript
@@ -46,7 +43,7 @@ We will use **npm** for managing dependencies and building the project.
    ```
 2. Navigate to the project directory:
    ```sh
-   cd TBD
+   cd hellosociallife
    ```
 3. Install dependencies:
    ```sh
