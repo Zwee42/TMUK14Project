@@ -43,7 +43,7 @@ We will use **npm** for managing dependencies and building the project.
    ```
 2. Navigate to the project directory:
    ```sh
-   cd hellosociallife
+   cd TMUK14Project/hellosociallife
    ```
 3. Install dependencies:
    ```sh
