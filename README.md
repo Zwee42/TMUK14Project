@@ -21,7 +21,7 @@ I, Rahaf Jomaa, declare that I am the sole author of the content I add to this r
 
 ## Project Plan
 ### What will we implement?
-We plan to develop a website where you can chat and interact with other people using text, voice and perhaps video.
+We plan to develop a website using nextjs where you can create an account then login to chat and interact with other people using text, voice and perhaps video.
 
 ### Technologies Used
 - **Languages:** Typescript, Javascript, html
