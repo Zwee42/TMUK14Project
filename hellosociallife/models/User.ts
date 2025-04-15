@@ -74,12 +74,14 @@ export class User {
   private _bio: string | null;
   private _image: string | null;
 
-  constructor(name: string, email: string, password: string, bio?: string, image?: string) {
+
+  constructor(name: string, email: string, password: string, bio?: string, image?: string, id?: mongoose.Types.ObjectId) {
     this._name = name;
     this._email = email;
     this._password = password;
     this._bio = bio || null;
     this._image = image || null;
+    this._id = this.id;
   }
 
   // Getters
@@ -133,6 +135,9 @@ export class User {
       bio: this._bio,
       image: this._image
     });
+
+    this._id = doc._id as mongoose.Types.ObjectId;
+
     return this;
   }
 
@@ -146,7 +151,7 @@ export class User {
   public static async findOne(emailOrUsername: string): Promise<User | null> {
     const UserModel = mongoose.model<IUserDocument>('User');
     const doc = await UserModel.findOne({
-      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
+      $or: [{ email: emailOrUsername }, { name: emailOrUsername }],
     }).select('+password'); // Include password for authentication
     if (!doc) return null;
     return User.fromDocument(doc);
@@ -160,12 +165,15 @@ export class User {
       doc.bio || undefined, 
       doc.image || undefined
     );
+
+    user._id = doc._id as mongoose.Types.ObjectId;
     return user;
   }
 
   public async comparePassword(candidatePassword: string): Promise<boolean> {
     const UserModel = mongoose.model<IUserDocument>('User');
     const doc = await UserModel.findById(this._id).select('+password');
+    console.log(doc);
     if (!doc) return false;
     return doc.comparePassword(candidatePassword);
   }
