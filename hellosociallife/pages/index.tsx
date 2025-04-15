@@ -1,6 +1,6 @@
 export default function Home() {
   const handleSignUp = () => {
-    window.location.href = "/register";
+    window.location.href = "/signup";
   };
 
   const handleSignIn = () => {

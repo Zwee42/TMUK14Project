@@ -19,7 +19,7 @@ export default function Home() {
 
   const reg_button = (e: React.MouseEvent) => {
     e.preventDefault();
-    window.location.href = "/register";
+    window.location.href = "/signup";
   };
 
   return (
