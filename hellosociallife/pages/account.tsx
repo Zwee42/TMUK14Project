@@ -1,8 +1,14 @@
 import { UserCircleIcon, CogIcon, BellIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
-import { User } from '@/models/AUser';
-import React, { useState } from 'react';
 
-export default function AccountPage() {
+import React, { useState } from 'react';
+import { GetServerSideProps } from 'next';
+
+import { requireAuth } from '@/utils/auth';
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
+};
+export default function AccountPage({user}: any) {
   // User data
   const userData = { 
     name: "John Johnsson",
@@ -17,14 +23,32 @@ export default function AccountPage() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   
-  const user = new User(userData.name, userData.email, text, userData.image);
+  //const user = new User(userData.name, userData.email, text, userData.image);
 
   // Event handlers
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
     setError(null);
     setSuccess(null);
   };
+  const handleLogout = async (e: React.MouseEvent) => {
+    const res = await fetch ('/api/logout', {
+      method : 'Post', // hämta från backend
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        
+      }),
+
+    });
+    const data = await res.json();
+
+    if (res.ok){
+      console.log("User info:", data.user);
+      window.location.href = "/home"
+    }
+  }
 
   const handleSave = async () => {
     if (!text.trim()) {
@@ -96,9 +120,11 @@ export default function AccountPage() {
                 </a>
               </nav>
 
-              <div className="mt-8 pt-4 border-t border-[#003366]">
-                <button className="group flex items-center text-sm font-medium text-[#00bfff] hover:text-white w-full">
-                  <ArrowRightOnRectangleIcon className="text-[#00bfff] group-hover:text-[#00bfff] flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
+              <div className="mt-8 pt-4 border-t border-gray-200">
+                <button 
+                onClick = {handleLogout}
+                className="group flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
+                  <ArrowRightOnRectangleIcon className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                   <span>Sign out</span>
                 </button>
               </div>
