@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
+import {User} from '@/models/User';
 import bcrypt from 'bcryptjs';
 
 const SECRET_KEY = process.env.JWT_SECRET as string;  
@@ -18,19 +18,23 @@ export default async function handler(
       if (req.method !== 'POST') return res.status(405).end();
 
       await dbConnect();
-      const { username, email, password } = req.body;
+      const emailOrUsername: string = req.body.emailOrUsername;
+      const password: string = req.body.password;
+      
     
-      const user = await User.findOne({ email });
+      const user = await User.findOne( emailOrUsername );
       if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await user.comparePassword(password);
       if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     
       // Create a JWT with user data
       const token = jwt.sign({
-        userId: user._id.toString(),
-        username: username,
-        email: email,
+        userId: user.id,
+        username: user.name,
+        email: user.email,
+        avatar : user.image,
+        bio : user.bio
       }, SECRET_KEY, { expiresIn: '1h' });
 
       // Set the JWT as a cookie
