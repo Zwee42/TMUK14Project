@@ -62,8 +62,8 @@ export default function Home() {
     const data = await res.json();
   
     if (res.ok) {
-      alert("Registrering lyckades!");
       console.log("User info:", data.user);
+      window.location.href = "/";
     setIsRegistered(true);
     setError("");
       // Navigera till en annan sida om du vill
