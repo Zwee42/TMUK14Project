@@ -19,16 +19,26 @@ export default async function handler(
       if (req.method !== 'POST') return res.status(405).end();
 
       await dbConnect();
-      const emailOrUsername: string = req.body.emailOrUsername;
-      const password: string = req.body.password;
-      
+    //  const emailOrUsername: string = req.body.emailOrUsername;
+    //   console.log(req.body);
+    //   const password: string = req.body['password'];
+    
+
+      const { emailOrUsername, password }: { emailOrUsername: string; password: string } = req.body;
+
+      console.log(emailOrUsername);
+      console.log(password);  
     
       const user = await User.findOne( emailOrUsername );
-      if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+      if (!user) return res.status(400).json({ message: '111111111Invalid credentials' });
     
+      console.log(user.id);
+
+
+      
       const isMatch = await user.comparePassword(password);
 
-      if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+      if (!isMatch) return res.status(400).json({ message: '22222222222Invalid credentials' });
     
       // Create a JWT with user data
       const token = jwt.sign({

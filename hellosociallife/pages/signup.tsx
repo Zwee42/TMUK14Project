@@ -33,26 +33,49 @@ export default function Home() {
     return regex.test(password);
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (!isPasswordValid(formData.password)) {
+  ///console.log(formData.password)
+   if (!isPasswordValid(formData.password)) {
       setError(
         "The password must be at least 8 characters long, contain one uppercase letter, one lowercase letter, and one special character."
       );
       return;
     }
-
+  
     if (formData.password !== formData.confirmPassword) {
       setError("The passwords do not match.");
       return;
     }
-
-    console.log("Registreringsdata:", formData);
-    setError("");
+    const res = await fetch('/api/register', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        email: formData.email,
+        username: formData.firstName,
+        password: formData.password,
+      }),
+    });
+  
+    const data = await res.json();
+  
+    if (res.ok) {
+      alert("Registrering lyckades!");
+      console.log("User info:", data.user);
     setIsRegistered(true);
-    //alert("Registration successful!");
+    setError("");
+      // Navigera till en annan sida om du vill
+    } else {
+      alert("Fel: " + data.message);
+      console.error(data.error || data.message);
+    }
   };
+
+    //console.log("Registreringsdata:", formData);
+    //
+    //alert("Registration successful!");
 
   if (isRegistered) {
     return (
