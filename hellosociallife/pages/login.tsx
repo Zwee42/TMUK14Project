@@ -50,10 +50,16 @@ export default function Home() {
       <form>
 
         <div>
-            <label htmlFor="username">Användarnamn:</label><br />
+            <label htmlFor="username">Användarnamn eller emailaddress:</label><br />
             <input type="text" id="username" name="username" value= {username} onChange={(e) => setUsername(e.target.value)}/>
 
         </div>
+
+  
+
+
+
+
 
         <div>
             <label htmlFor="password">Lösenord:</label>
