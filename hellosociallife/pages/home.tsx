@@ -1,48 +1,12 @@
 import { GetServerSideProps } from 'next';
-import jwt from 'jsonwebtoken';
 
-export const getServerSideProps: GetServerSideProps = async ({ req }) => {
-  const cookie = req.headers.cookie || '';
-  const authToken = cookie
-    .split(';')
-    .find((cookie) => cookie.trim().startsWith('auth_token='));
+import { requireAuth } from '@/utils/auth';
 
-  if (!authToken) {
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
-
-  const token = authToken.split('=')[1];
-
-  try {
-    const decodedToken = jwt.decode(token);
-    if (!decodedToken) throw new Error('Invalid token');
-
-    return {
-      props: {
-        user: decodedToken,
-      },
-    };
-  } catch (error) {
-    console.error('Error decoding token:', error);
-    return {
-      redirect: {
-        destination: '/',
-        permanent: false,
-      },
-    };
-  }
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
 
-interface AccountPageProps {
-  user: any;
-}
-
-export default function Home({ user }: AccountPageProps) {
+export default function Home({ user }: any) {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#000814] via-[#000d1a] to-[#001a33] text-gray-200 p-8 relative">
       
