@@ -3,7 +3,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import { parse } from 'cookie';
 
-const SECRET_KEY = process.env.SECRET_KEY as string; // Same key as in login
+const SECRET_KEY = process.env.JWT_SECRET as string; // Same key as in login
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const cookies = parse(req.headers.cookie || ''); // Parse cookies
