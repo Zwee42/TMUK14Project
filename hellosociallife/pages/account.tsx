@@ -21,11 +21,29 @@ export default function AccountPage() {
   const user = new User(userData.name, userData.email, text, userData.image);
 
   // Event handlers
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
     setText(e.target.value);
     setError(null);
     setSuccess(null);
   };
+  const handleLogout = async (e: React.MouseEvent) => {
+    const res = await fetch ('/api/logout', {
+      method : 'Post', // hämta från backend
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        
+      }),
+
+    });
+    const data = await res.json();
+
+    if (res.ok){
+      console.log("User info:", data.user);
+      window.location.href = "/home"
+    }
+  }
 
   const handleSave = async () => {
     if (!text.trim()) {
@@ -106,7 +124,9 @@ export default function AccountPage() {
               </nav>
 
               <div className="mt-8 pt-4 border-t border-gray-200">
-                <button className="group flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
+                <button 
+                onClick = {handleLogout}
+                className="group flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
                   <ArrowRightOnRectangleIcon className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                   <span>Sign out</span>
                 </button>
