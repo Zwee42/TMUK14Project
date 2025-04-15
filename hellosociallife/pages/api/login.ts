@@ -1,34 +1,36 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
+import dbConnect from '@/lib/mongodb';
+import User from '@/models/User';
+import bcrypt from 'bcryptjs';
 
-const SECRET_KEY = process.env.SECRET_KEY as string;  
+const SECRET_KEY = process.env.JWT_SECRET as string;  
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<{ message: string } | { error: string }>
 ) {
-  const code = req.query.code as string;
-
-  // Handle missing or invalid code
-  if (!code) {
-    return res.status(400).json({ error: 'Authorization code is missing' });
-  }
 
   const loginUser = async () => {
     try {
 
-      //TODO implement the loginUser function
+      if (req.method !== 'POST') return res.status(405).end();
 
-      const userData: any = null;
-
+      await dbConnect();
+      const { username, email, password } = req.body;
+    
+      const user = await User.findOne({ email });
+      if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
+    
       // Create a JWT with user data
       const token = jwt.sign({
-        userId: userData.id,
-        username: userData.username,
-        avatar: userData.avatar,
-        global_name: userData.global_name,
-        discriminator: userData.discriminator,
+        userId: user._id.toString(),
+        username: username,
+        email: email,
       }, SECRET_KEY, { expiresIn: '1h' });
 
       // Set the JWT as a cookie
