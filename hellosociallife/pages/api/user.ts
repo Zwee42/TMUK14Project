@@ -1,7 +1,7 @@
 // pages/api/user.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';
-import User from '@/models/User';
+import User from '@/models/AUser';
 import { getUserFromToken } from '@/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

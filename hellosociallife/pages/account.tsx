@@ -1,6 +1,6 @@
 // app/account/page.tsx
 import { UserCircleIcon, CogIcon, BellIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
-import { User } from '@/models/User';
+import { User } from '@/models/AUser';
 import React, { useState } from 'react';
 
 export default function AccountPage() {
