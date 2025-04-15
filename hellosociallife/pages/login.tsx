@@ -1,4 +1,6 @@
+import { ok } from "assert";
 import { useState } from "react";
+import bcrypt from 'bcryptjs';
 
 export default function Home() {
   const [username, setUsername] = useState("");
@@ -7,15 +9,41 @@ export default function Home() {
   const testUsername = "diexiy";
   const testPassword = "lösenord";
 
-  const handleLogin = (e: React.MouseEvent) => {
+  
+
+  const handleLogin = async(e: React.MouseEvent) => {
     e.preventDefault();
 
-    if (username === testUsername && password === testPassword) {
-      window.location.href = "/home";
-    } else {
-      alert("Fel användarnamn eller lösenord!!!");
-    }
-  };
+    console.log(username);
+    console.log(password);
+
+    
+    const res = await fetch('/api/login', {
+          method: 'POST',
+          headers: {
+              'Content-Type': 'application/json',
+          },
+
+          body: JSON.stringify({
+              emailOrUsername: username,
+              password: password, 
+          }),
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+
+          console.log("User info:", data.user);
+          window.location.href = "/home";
+
+
+        } else {
+          alert ("fel: " + data.message);
+          console.error(data.error || data.message);
+        }
+  };  
+
 
   const reg_button = (e: React.MouseEvent) => {
     e.preventDefault();

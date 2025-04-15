@@ -37,13 +37,12 @@ export default async function handler(
     }
 
     // Hash password
-    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create new user using your User class
     const user = new User(
       username,
       email,
-      hashedPassword, // Using the hashed password
+      password, // Using the hashed password
       undefined, // bio
       undefined  // image
     );
