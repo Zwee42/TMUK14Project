@@ -38,7 +38,7 @@ const UserSchema = new Schema<IUserDocument>({
     minlength: 8,
     validate: {
       validator: function(v: string) {
-        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(v);
+        return /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/.test(v);
       },
       message: 'Password must contain at least one uppercase letter, one lowercase letter, one number and one special character'
     }
@@ -107,7 +107,7 @@ export class User {
   }
 
   set password(value: string) {
-    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$/;
     if (!passwordRegex.test(value)) {
       throw new Error("Password must contain at least one uppercase letter, one lowercase letter, one number and one special character");
     }
