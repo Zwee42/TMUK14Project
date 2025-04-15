@@ -11,7 +11,7 @@ export default function Home() {
     e.preventDefault();
 
     if (username === testUsername && password === testPassword) {
-      window.location.href = "/";
+      window.location.href = "/home";
     } else {
       alert("Fel användarnamn eller lösenord!!!");
     }

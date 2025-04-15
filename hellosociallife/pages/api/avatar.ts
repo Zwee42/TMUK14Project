@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';
 
-import User from '@/models/User';
+import {User} from '@/models/User';
 import { getUserFromToken } from '@/lib/auth';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -16,7 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { avatarUrl } = req.body;
   if (!avatarUrl) return res.status(400).json({ message: 'No avatar URL provided' });
 
-  await User.findByIdAndUpdate(user.userId, { avatar: avatarUrl });
+  // await User.findByIdAndUpdate(user.userId, { avatar: avatarUrl });
 
   res.status(200).json({ message: 'Avatar updated' });
 }
