@@ -3,7 +3,7 @@
 
 export default function Home() {
 
-  const arr = [1, 2, 3, 4, 5];
+  const arr = [1, 2, 3, 4, 5, 6];
 
 
   return (
@@ -12,7 +12,7 @@ export default function Home() {
         <div key={index}>{item}</div>
       ))}
 
-      <p className="text-center">
+      <p className="text-center bg-green-600">
         HEJ
       </p>
     </div> 
