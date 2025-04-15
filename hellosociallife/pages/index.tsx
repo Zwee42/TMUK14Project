@@ -13,6 +13,7 @@ export default function Home() {
         HSL - HELLO SOCIAL LIFE
       </h1>
 
+
       <p className="text-lg text-gray-400 mb-8">
         Welcome to your new favourite social platform!
       </p>
