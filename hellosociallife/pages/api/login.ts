@@ -3,6 +3,7 @@ import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import dbConnect from '@/lib/mongodb';
 import {User} from '@/models/User';
+
 import bcrypt from 'bcryptjs';
 
 const SECRET_KEY = process.env.JWT_SECRET as string;  
@@ -26,6 +27,7 @@ export default async function handler(
       if (!user) return res.status(400).json({ message: 'Invalid credentials' });
     
       const isMatch = await user.comparePassword(password);
+
       if (!isMatch) return res.status(400).json({ message: 'Invalid credentials' });
     
       // Create a JWT with user data

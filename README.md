@@ -16,22 +16,18 @@ I, Maria Birtman, declare that I am the sole author of the content I add to this
 
 I, Leyla Al sheikha, declare that I am the sole author of the content I add to this repository.
 
+I, Rahaf Jomaa, declare that I am the sole author of the content I add to this repository.
 
-
-AAAAAAAAAAAAAAAAAAAa
 
 ## Project Plan
 ### What will we implement?
-We plan to develop a website where you can chat and interact with other people using text voice and perhaps video.
-
-### How will it work?
-The application will be hosted as a website where users can create accounts and interact with eachother.
+We plan to develop a website using nextjs where you can create an account then login to chat and interact with other people using text, voice and perhaps video.
 
 ### Technologies Used
-- **Languages:** Typescript
-- **Frameworks/Libraries:** [React, Nextjs]
+- **Languages:** Typescript, Javascript, html
+- **Frameworks/Libraries:** [Node, React, Nextjs, Tailwindcss]
 - **Database:** TBD
-- 
+
 ### Build System
 We will use **npm** for managing dependencies and building the project. 
 
@@ -43,14 +39,21 @@ We will use **npm** for managing dependencies and building the project.
    ```
 2. Navigate to the project directory:
    ```sh
-   cd hellosociallife
+   cd TMUK14Project/hellosociallife
    ```
 3. Install dependencies:
    ```sh
    npm install
    ```
-4. Run the project:
-   ```sh
-   npm run start
-   ```
+4. Running the project as
 
+    4.1 Development:
+      ```sh
+      npm run dev
+      ```
+   
+    4.2 Production:     
+    ```sh
+    npm run build
+    npm run start
+    ```
