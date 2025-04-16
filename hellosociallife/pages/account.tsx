@@ -2,56 +2,52 @@ import { UserCircleIcon, CogIcon, BellIcon, ShieldCheckIcon, ArrowRightOnRectang
 
 import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
-
+import { User } from '@/models/User';
 import { requireAuth } from '@/utils/auth';
 
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
-export default function AccountPage({user}: any) {
-  // User data
-  const userData = { 
-    name: "John Johnsson",
-    email: "john@gmail.com",
-    bio: "",
-    image: "imgs/bild1.png"
-  };
+// Update the imports and existing code...
 
+export default function AccountPage({ user }: { user: any }) {
   // State management
-  const [text, setText] = useState<string>(userData.bio || '');
-  const [isSaving, setIsSaving] = useState<boolean>(false);
+  const [formData, setFormData] = useState({
+    firstName: user.name?.split(' ')[0] || '',
+    lastName: user.name?.split(' ')[1] || '',
+    email: user.email || '',
+    bio: user.bio || '',
+  });
+  const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  
-  //const user = new User(userData.name, userData.email, text, userData.image);
 
-  // Event handlers
-  const handleChange =  (e: React.ChangeEvent<HTMLInputElement>) => {
-    setText(e.target.value);
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
     setError(null);
     setSuccess(null);
   };
-  const handleLogout = async (e: React.MouseEvent) => {
-    const res = await fetch ('/api/logout', {
-      method : 'Post', // hämta från backend
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        
-      }),
 
-    });
-    const data = await res.json();
-
-    if (res.ok){
-      console.log("User info:", data.user);
-      window.location.href = "/home"
+  const handleLogout = async () => {
+    try {
+      const res = await fetch('/api/auth/logout', {
+        method: 'POST',
+      });
+      
+      if (res.ok) {
+        window.location.href = '/login';
+      }
+    } catch (err) {
+      console.error('Logout failed:', err);
     }
-  }
+  };
 
   const handleSave = async () => {
-    if (!text.trim()) {
+    if (!formData.bio.trim()) {
       setError('Bio cannot be empty');
       return;
     }
@@ -60,17 +56,32 @@ export default function AccountPage({user}: any) {
     setError(null);
 
     try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await fetch('/api/user/update', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.userId,
+          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          bio: formData.bio
+        }),
+      });
 
-      setSuccess('Bio saved successfully!');
-      console.log('Bio saved:', text);
+      if (!response.ok) {
+        throw new Error('Failed to update profile');
+      }
+
+      const data = await response.json();
+      setSuccess('Profile updated successfully!');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save bio');
+      setError(err instanceof Error ? err.message : 'Failed to save profile');
     } finally {
       setIsSaving(false);
     }
   };
+
+  // Rest of your component remains the same...
 
   if (!user) {
     return <div>Please sign in to view your account</div>;
@@ -188,7 +199,7 @@ export default function AccountPage({user}: any) {
                       type="text"
                       name="bio"
                       id="bio"
-                      value={text}
+                      value={formData.bio}
                       onChange={handleChange}
                       className="block w-full rounded-md border border-[#00bfff] shadow-sm py-2 px-3 focus:border-[#00bfff] focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
                       placeholder="Tell us a little about yourself"
@@ -201,9 +212,9 @@ export default function AccountPage({user}: any) {
                 <div className="mt-6 flex justify-end">
                   <button
                     onClick={handleSave}
-                    disabled={isSaving || !text.trim()}
+                    disabled={isSaving || !formData.bio.trim()}
                     className={`px-4 py-2 rounded text-white ${
-                      isSaving || !text.trim()
+                      isSaving || !formData.bio.trim()
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-[#00bfff] hover:bg-[#008c99]'
                     }`}
