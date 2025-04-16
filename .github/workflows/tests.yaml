@@ -18,6 +18,9 @@ jobs:
         with:
           node-version: '18'
 
+      - name: Move backwords
+        run: cd ../
+
       - name: Install dependencies
         run: npm install
 
