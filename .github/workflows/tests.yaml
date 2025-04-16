@@ -18,11 +18,11 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Move backwords
-        run: cd ../
-
       - name: Install dependencies
         run: npm install
+        working-directory: ./hellosociallife
+
 
       - name: Run tests
         run: npm run test
+        working-directory: ./hellosociallife
