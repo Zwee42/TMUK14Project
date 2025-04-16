@@ -4,8 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface FormData {
-  firstName: string;
-  lastName: string;
+  userName: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -13,8 +12,7 @@ interface FormData {
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
-    firstName: "",
-    lastName: "",
+    userName: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -54,7 +52,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         email: formData.email,
-        username: formData.firstName,
+        username: formData.userName,
         password: formData.password,
       }),
     });
@@ -62,8 +60,8 @@ export default function Home() {
     const data = await res.json();
   
     if (res.ok) {
-      alert("Registrering lyckades!");
       console.log("User info:", data.user);
+      window.location.href = "/"
     setIsRegistered(true);
     setError("");
       // Navigera till en annan sida om du vill
@@ -73,17 +71,14 @@ export default function Home() {
     }
   };
 
-    //console.log("Registreringsdata:", formData);
-    //
-    //alert("Registration successful!");
 
   if (isRegistered) {
     return (
       <div className="max-w-md mx-auto mt-10 p-6 bg-[#000814] rounded-xl shadow-md text-center text-white">
         <h2 className="text-3xl font-bold text-[#00bfff] drop-shadow-[0_0_12px_rgba(0,191,255,0.9)]">
-          Welcome, {formData.firstName} {formData.lastName}!
+          Welcome, {formData.userName}!
         </h2>
-        <p className="mt-4 text-gray-300">Your account has been created successfully, {formData.firstName}.</p>
+        <p className="mt-4 text-gray-300">Your account has been created successfully, {formData.userName}.</p>
       </div>
     );
   }
@@ -98,18 +93,9 @@ export default function Home() {
         <input
           className="w-full p-3 bg-[#000814] border-2 border-[#00bfff] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00bfff]"
           type="text"
-          name="firstName"
-          placeholder="Firstname"
-          value={formData.firstName}
-          onChange={handleChange}
-          required
-        />
-        <input
-          className="w-full p-3 bg-[#000814] border-2 border-[#00bfff] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00bfff]"
-          type="text"
-          name="lastName"
-          placeholder="Lastname"
-          value={formData.lastName}
+          name="username"
+          placeholder="Username"
+          value={formData.userName}
           onChange={handleChange}
           required
         />

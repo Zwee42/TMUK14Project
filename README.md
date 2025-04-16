@@ -57,3 +57,26 @@ We will use **npm** for managing dependencies and building the project.
     npm run build
     npm run start
     ```
+5. Automated Tests
+  
+   5.1 Running test cases
+    ```sh
+   npm run test
+
+   ```
+
+   5.2 Running with coverage 
+     ```sh
+   npm run test:coverage
+
+   ```
+
+   5.3 Run linter
+    ```sh
+   npm run lint
+
+   ```  
+   
+
+   
+
