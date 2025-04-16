@@ -20,6 +20,9 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./hellosociallife
+
 
       - name: Run tests
         run: npm run test
+        working-directory: ./hellosociallife
