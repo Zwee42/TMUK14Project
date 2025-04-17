@@ -13,6 +13,7 @@
     "@heroicons/react": "^2.2.0",
     "bcryptjs": "^3.0.2",
     "cookie": "^1.0.2",
+    "eslint-plugin-next": "^0.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.13.2",
     "next": "15.2.4",

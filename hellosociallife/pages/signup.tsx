@@ -93,7 +93,7 @@ export default function Home() {
         <input
           className="w-full p-3 bg-[#000814] border-2 border-[#00bfff] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00bfff]"
           type="text"
-          name="username"
+          name="userName"
           placeholder="Username"
           value={formData.userName}
           onChange={handleChange}
