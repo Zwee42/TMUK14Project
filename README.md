@@ -1,5 +1,7 @@
 # Hello social life (HSL)
 
+[![Run CI](https://github.com/Zwee42/TMUK14Project/actions/workflows/ci.yaml/badge.svg)](https://github.com/Zwee42/TMUK14Project/actions/workflows/ci.yaml)
+
 ## Group Members
 | Name              | GitHub Handle                |
 |-------------------|------------------------------|
