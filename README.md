@@ -28,7 +28,7 @@ We plan to develop a website using nextjs where you can create an account then l
 ### Technologies Used
 - **Languages:** Typescript, Javascript, html
 - **Frameworks/Libraries:** [Node, React, Nextjs, Tailwindcss]
-- **Database:** TBD
+- **Database:** MongoDB
 
 ### Build System
 We will use **npm** for managing dependencies and building the project. 
