@@ -61,6 +61,7 @@ export default function Home() {
   
     if (res.ok) {
       console.log("User info:", data.user);
+      localStorage.setItem('userEmail', formData.email);
       window.location.href = "/"
     setIsRegistered(true);
     setError("");
@@ -135,6 +136,18 @@ export default function Home() {
         >
           Sign Up
         </button>
+        <div className="mt-4 text-center">
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      window.location.href = "/login";
+    }}
+    className="text-[#00bfff] hover:underline"
+  >
+    Logga in
+  </button>
+</div>
+
       </form>
     </div>
   );
