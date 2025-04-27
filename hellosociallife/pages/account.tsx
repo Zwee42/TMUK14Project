@@ -1,5 +1,5 @@
 import { UserCircleIcon, CogIcon, BellIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
-
+import Link from 'next/link';
 import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
 import { User } from '@/models/User';
@@ -8,13 +8,11 @@ import { requireAuth } from '@/utils/auth';
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
-// Update the imports and existing code...
 
-export default function AccountPage({ user }: { user: any }) {
+export default function AccountPage({ user }: { user: User }) {
   // State management
   const [formData, setFormData] = useState({
-    firstName: user.name?.split(' ')[0] || '',
-    lastName: user.name?.split(' ')[1] || '',
+    username: user.username || '',
     email: user.email || '',
     bio: user.bio || '',
   });
@@ -37,12 +35,42 @@ export default function AccountPage({ user }: { user: any }) {
       const res = await fetch('/api/logout', {
         method: 'POST',
       });
-      
+
       if (res.ok) {
         window.location.href = '/login';
       }
     } catch (err) {
       console.error('Logout failed:', err);
+    }
+  };
+
+  const handleDeleteAccount = async () => {
+    const confirmDelete = window.confirm("Are you sure you want to delete your account?");
+    if (!confirmDelete) return;
+
+    const email = localStorage.getItem('userEmail');
+
+    if (!email) {
+      alert('No email found, please login again');
+      return;
+    }
+
+    const res = await fetch('/api/deleteUser', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert('Account deleted successfully');
+      localStorage.removeItem('userEmail');
+      window.location.href = 'account/security';
+    } else {
+      alert('Failed to delete account: ' + data.error);
     }
   };
 
@@ -62,8 +90,8 @@ export default function AccountPage({ user }: { user: any }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user.userId,
-          name: `${formData.firstName} ${formData.lastName}`.trim(),
+          username: formData.username.trim(),
+          email: formData.email.trim(),
           bio: formData.bio
         }),
       });
@@ -80,8 +108,6 @@ export default function AccountPage({ user }: { user: any }) {
       setIsSaving(false);
     }
   };
-
-  // Rest of your component remains the same...
 
   if (!user) {
     return <div>Please sign in to view your account</div>;
@@ -100,14 +126,14 @@ export default function AccountPage({ user }: { user: any }) {
                     <img
                       className="h-12 w-12 rounded-full"
                       src={user.image}
-                      alt={user.name || 'User avatar'}
+                      alt={user.username || 'User avatar'}
                     />
                   ) : (
                     <UserCircleIcon className="h-12 w-12 text-[#00bfff]" />
                   )}
                 </div>
                 <div>
-                  <h2 className="text-lg font-medium text-white">{user.name}</h2>
+                  <h2 className="text-lg font-medium text-white">{user.username || user.email}</h2>
                   <p className="text-sm text-gray-300">{user.email}</p>
                 </div>
               </div>
@@ -125,16 +151,16 @@ export default function AccountPage({ user }: { user: any }) {
                   <BellIcon className="text-[#00bfff] group-hover:text-[#00bfff] flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                   <span className="truncate">Notifications</span>
                 </a>
-                <a href="#" className="text-gray-300 hover:bg-[#003366] hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-md">
+                <Link href="/account/security" className="text-gray-300 hover:bg-[#003366] hover:text-white group flex items-center px-3 py-2 text-sm font-medium rounded-md">
                   <ShieldCheckIcon className="text-[#00bfff] group-hover:text-[#00bfff] flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                   <span className="truncate">Security</span>
-                </a>
+                </Link>
               </nav>
 
               <div className="mt-8 pt-4 border-t border-gray-200">
-                <button 
-                onClick = {handleLogout}
-                className="group flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
+                <button
+                  onClick={handleLogout}
+                  className="group flex items-center text-sm font-medium text-gray-600 hover:text-gray-900 w-full">
                   <ArrowRightOnRectangleIcon className="text-gray-400 group-hover:text-gray-500 flex-shrink-0 -ml-1 mr-3 h-6 w-6" />
                   <span>Sign out</span>
                 </button>
@@ -152,43 +178,32 @@ export default function AccountPage({ user }: { user: any }) {
                 <div className="space-y-6">
                   <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
                     <div>
-                      <label htmlFor="first-name" className="block text-sm font-medium text-gray-300">
-                        First name
+                      <label htmlFor="username" className="block text-sm font-medium text-gray-300">
+                        Username
                       </label>
                       <input
                         type="text"
-                        name="first-name"
-                        id="first-name"
-                        defaultValue={user.name?.split(' ')[0] || ''}
+                        name="username"
+                        id="username"
+                        value={formData.username}  // Binding correct username
+                        onChange={handleChange}
                         className="mt-1 block w-full rounded-md border border-[#00bfff] py-2 px-3 shadow-sm focus:border-[#00bfff] focus:outline-none focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
                       />
                     </div>
 
                     <div>
-                      <label htmlFor="last-name" className="block text-sm font-medium text-gray-300">
-                        Last name
+                      <label htmlFor="email" className="block text-sm font-medium text-gray-300">
+                        Email address
                       </label>
                       <input
                         type="text"
-                        name="last-name"
-                        id="last-name"
-                        defaultValue={user.name?.split(' ')[1] || ''}
+                        name="email"
+                        id="email"
+                        value={formData.email}  // Binding email to the input
+                        onChange={handleChange}
                         className="mt-1 block w-full rounded-md border border-[#00bfff] py-2 px-3 shadow-sm focus:border-[#00bfff] focus:outline-none focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
                       />
                     </div>
-                  </div>
-
-                  <div>
-                    <label htmlFor="email" className="block text-sm font-medium text-gray-300">
-                      Email address
-                    </label>
-                    <input
-                      type="text"
-                      name="email"
-                      id="email"
-                      defaultValue={user.email || ''}
-                      className="mt-1 block w-full rounded-md border border-[#00bfff] py-2 px-3 shadow-sm focus:border-[#00bfff] focus:outline-none focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
-                    />
                   </div>
 
                   <div>
@@ -213,11 +228,10 @@ export default function AccountPage({ user }: { user: any }) {
                   <button
                     onClick={handleSave}
                     disabled={isSaving || !formData.bio.trim()}
-                    className={`px-4 py-2 rounded text-white ${
-                      isSaving || !formData.bio.trim()
+                    className={`px-4 py-2 rounded text-white ${isSaving || !formData.bio.trim()
                         ? 'bg-gray-400 cursor-not-allowed'
                         : 'bg-[#00bfff] hover:bg-[#008c99]'
-                    }`}
+                      }`}
                   >
                     {isSaving ? 'Saving...' : 'Save'}
                   </button>

@@ -4,7 +4,7 @@ import bcrypt from 'bcryptjs';
 
 // 1. Define Mongoose Interface
 export interface IUserDocument extends Document {
-  name: string;
+  username: string;
   email: string;
   password: string;
   bio?: string;
@@ -14,7 +14,7 @@ export interface IUserDocument extends Document {
 
 // 2. Create Mongoose Schema
 const UserSchema = new Schema<IUserDocument>({
-  name: { 
+  username: { 
     type: String, 
     required: true,
     validate: {
@@ -129,7 +129,7 @@ export class User {
     const UserModel = mongoose.model<IUserDocument>('User');
     const doc = await UserModel.create({
       _id: this._id,
-      name: this._name,
+      username: this._name,
       email: this._email,
       password: this._password,
       bio: this._bio,
@@ -151,7 +151,7 @@ export class User {
   public static async findOne(emailOrUsername: string): Promise<User | null> {
     const UserModel = mongoose.model<IUserDocument>('User');
     const doc = await UserModel.findOne({
-      $or: [{ email: emailOrUsername }, { name: emailOrUsername }],
+      $or: [{ email: emailOrUsername }, { username: emailOrUsername }],
     }).select('+password'); // Include password for authentication
     if (!doc) return null;
     return User.fromDocument(doc);
@@ -159,7 +159,7 @@ export class User {
 
   public static fromDocument(doc: IUserDocument): User {
     const user = new User(
-      doc.name, 
+      doc.username, 
       doc.email, 
       doc.password, 
       doc.bio || undefined, 
