@@ -34,7 +34,7 @@ export default function AccountPage({ user }: { user: any }) {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('/api/auth/logout', {
+      const res = await fetch('/api/logout', {
         method: 'POST',
       });
       
