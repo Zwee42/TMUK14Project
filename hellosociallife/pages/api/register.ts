@@ -56,7 +56,7 @@ export default async function handler(
       user: {
         id: user.id,
         email: user.email,
-        username: user.name // Note: In your User class, name is used for username
+        username: user.username // Note: In your User class, name is used for username
       }
     });
 

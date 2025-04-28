@@ -73,7 +73,7 @@ export class User {
   private _password: string;
   private _bio: string | null;
   private _image: string | null;
-  username: string;
+
 
 
   constructor(username: string, email: string, password: string, bio?: string, image?: string, id?: mongoose.Types.ObjectId) {
@@ -87,14 +87,14 @@ export class User {
 
   // Getters
   get id() { return this._id; }
-  get name() { return this._username; }
+  get username() { return this._username; }
   get email() { return this._email; }
   get bio() { return this._bio; }
   get image() { return this._image; }
   get password() { return this._password; }
 
   // Setters with validation
-  set name(value: string) {
+  set username(value: string) {
     if (!value || value.length < 2) {
       throw new Error("Name must be at least 2 characters long");
     }
