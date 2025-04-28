@@ -35,7 +35,6 @@ export default async function handler(
     if (existingUsername) {
       return res.status(400).json({ message: 'Username already taken' });
     }
-
     // Hash password
 
     // Create new user using your User class
