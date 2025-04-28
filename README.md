@@ -1,5 +1,7 @@
 # Hello social life (HSL)
 
+[![Run CI](https://github.com/Zwee42/TMUK14Project/actions/workflows/ci.yaml/badge.svg)](https://github.com/Zwee42/TMUK14Project/actions/workflows/ci.yaml)
+
 ## Group Members
 | Name              | GitHub Handle                |
 |-------------------|------------------------------|
@@ -26,7 +28,7 @@ We plan to develop a website using nextjs where you can create an account then l
 ### Technologies Used
 - **Languages:** Typescript, Javascript, html
 - **Frameworks/Libraries:** [Node, React, Nextjs, Tailwindcss]
-- **Database:** TBD
+- **Database:** MongoDB
 
 ### Build System
 We will use **npm** for managing dependencies and building the project. 
@@ -58,25 +60,29 @@ We will use **npm** for managing dependencies and building the project.
     npm run start
     ```
 5. Automated Tests
-  
-   5.1 Running test cases
+
+
+   5.1   To run the test suite, use the following command
     ```sh
    npm run test
-
    ```
+    - This will execute all defined unit tests and display the results in the terminal.
 
-   5.2 Running with coverage 
+
+   5.2 To run tests with coverage reporting enabled, use:
      ```sh
    npm run test:coverage
-
    ```
+     - This generates a coverage report, indicating how much of your codebase is covered by tests. The report includes details on statements, branches, functions, and lines tested.
 
-   5.3 Run linter
+
+   5.3 To check your code for linting errors, use:
     ```sh
    npm run lint
 
    ```  
-   
+   - This will highlight any syntax or style issues in your codebase.
+
 
    
 

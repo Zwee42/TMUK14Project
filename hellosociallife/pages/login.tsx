@@ -9,41 +9,61 @@ export default function Home() {
   const testUsername = "diexiy";
   const testPassword = "lösenord";
 
-  
 
-  const handleLogin = async(e: React.MouseEvent) => {
+
+  const handleLogin = async (e: React.MouseEvent) => {
     e.preventDefault();
 
     console.log(username);
     console.log(password);
 
-    
+
     const res = await fetch('/api/login', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
 
-          body: JSON.stringify({
-              emailOrUsername: username,
-              password: password, 
-          }),
-        });
+      body: JSON.stringify({
+        emailOrUsername: username,
+        password: password,
+      }),
+    });
 
-        const data = await res.json();
+    const data = await res.json();
 
-        if (res.ok) {
+    if (res.ok) {
 
-          console.log("User info:", data.user);
-          window.location.href = "/home";
+      console.log("User info:", data.user);
+      window.location.href = "/home";
 
 
-        } else {
-          alert ("fel: " + data.message);
-          console.error(data.error || data.message);
-        }
-  };  
+    } else {
+      alert("fel: " + data.message);
+      console.error(data.error || data.message);
+    }
+  };
 
+  const handleForgotPassword = async () => {
+    const email = prompt("Enter your email address:");
+    if (!email) return;
+
+    const res = await fetch('/api/forgotPassword', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ email }),
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      alert("Password reset link has been sent to your email.");
+    } else {
+      alert("Error: " + data.error);
+    }
+  };
 
   const reg_button = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -59,7 +79,7 @@ export default function Home() {
       <form className="flex flex-col gap-6">
         <div>
           <label htmlFor="username" className="block text-lg text-gray-300">
-            Användarnamn eller emailaddress:
+            Username or E-mail:
           </label>
           <input
             type="text"
@@ -73,7 +93,7 @@ export default function Home() {
 
         <div>
           <label htmlFor="password" className="block text-lg text-gray-300">
-            Lösenord:
+            Password:
           </label>
           <input
             type="password"
@@ -85,6 +105,7 @@ export default function Home() {
           />
         </div>
 
+
         <button
           onClick={handleLogin}
           className="px-10 py-3 mt-6 text-lg bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_15px_rgba(0,191,255,0.4)] transition-all duration-300 hover:bg-[#001a33]"
@@ -93,6 +114,16 @@ export default function Home() {
         </button>
 
         <div className="mt-6 text-center text-gray-400">
+          <label className="text-lg">Forgot your password?</label>
+          <button
+            onClick={handleForgotPassword}
+            className="text-lg text-[#00bfff] hover:underline"
+          >
+            Reset it!
+          </button>
+        </div>
+
+        <div className="mt-2 text-center text-gray-400">
           <label className="text-lg">Don't have an account? </label>
           <button
             onClick={reg_button}

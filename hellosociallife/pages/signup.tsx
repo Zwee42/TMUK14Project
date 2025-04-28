@@ -61,6 +61,7 @@ export default function Home() {
   
     if (res.ok) {
       console.log("User info:", data.user);
+      localStorage.setItem('userEmail', formData.email);
       window.location.href = "/"
     setIsRegistered(true);
     setError("");
@@ -93,7 +94,7 @@ export default function Home() {
         <input
           className="w-full p-3 bg-[#000814] border-2 border-[#00bfff] text-white rounded-xl focus:outline-none focus:ring-2 focus:ring-[#00bfff]"
           type="text"
-          name="username"
+          name="userName"
           placeholder="Username"
           value={formData.userName}
           onChange={handleChange}
@@ -135,6 +136,18 @@ export default function Home() {
         >
           Sign Up
         </button>
+        <div className="mt-4 text-center">
+  <button
+    onClick={(e) => {
+      e.preventDefault();
+      window.location.href = "/login";
+    }}
+    className="text-[#00bfff] hover:underline"
+  >
+    Logga in
+  </button>
+</div>
+
       </form>
     </div>
   );
