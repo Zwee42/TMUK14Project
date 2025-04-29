@@ -1,7 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';
 import { User } from '@/models/User';
-import bcrypt from 'bcryptjs';
 
 export default async function handler(
   req: NextApiRequest,
@@ -55,7 +54,7 @@ export default async function handler(
       user: {
         id: user.id,
         email: user.email,
-        username: user.username // Note: In your User class, name is used for username
+        username: username // Note: In your User class, name is used for username
       }
     });
 

@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
 
-export default function ChatPage({ user }: { user: User }) {
+export default function ChatPage({ user }: { user: any }) {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
 
