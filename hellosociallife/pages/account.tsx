@@ -48,19 +48,12 @@ export default function AccountPage({ user }: { user: User }) {
     const confirmDelete = window.confirm("Are you sure you want to delete your account?");
     if (!confirmDelete) return;
 
-    const email = localStorage.getItem('userEmail');
-
-    if (!email) {
-      alert('No email found, please login again');
-      return;
-    }
-
     const res = await fetch('/api/deleteUser', {
       method: 'DELETE',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ email }),
+      body: JSON.stringify({}),
     });
 
     const data = await res.json();
@@ -90,6 +83,7 @@ export default function AccountPage({ user }: { user: User }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
+          userId: user.id,
           username: formData.username.trim(),
           email: formData.email.trim(),
           bio: formData.bio
