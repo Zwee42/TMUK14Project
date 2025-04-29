@@ -119,8 +119,8 @@ export default function ChatPage({ user }: { user: any }) {
             cursor: 'pointer',
             transition: 'background-color 0.3s ease',
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = '#001a33'}
-          onMouseLeave={(e) => e.target.style.backgroundColor = '#003366'}
+          onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#001a33'}
+          onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#003366'}
         >
           Send
         </button>
