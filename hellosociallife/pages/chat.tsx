@@ -10,7 +10,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
 
-export default function ChatPage({ user }: { user: User }) {
+export default function ChatPage({ user }: { user: any }) {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
 
@@ -119,8 +119,8 @@ export default function ChatPage({ user }: { user: User }) {
             cursor: 'pointer',
             transition: 'background-color 0.3s ease',
           }}
-          onMouseEnter={(e) => e.target.style.backgroundColor = '#001a33'}
-          onMouseLeave={(e) => e.target.style.backgroundColor = '#003366'}
+          onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#001a33'}
+          onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#003366'}
         >
           Send
         </button>

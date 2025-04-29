@@ -59,7 +59,7 @@ describe('Login API', () => {
     const user = {
       id: '123',
       email: 'test@example.com',
-      name: 'testuser',
+      username: 'testuser',
       password: 'hashedPassword',
     };
 
