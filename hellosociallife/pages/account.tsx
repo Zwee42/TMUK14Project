@@ -12,7 +12,7 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 
 export default function AccountPage({ user }: { user: User }) {
   // State management
-  const [isSettingOpen, setIsSettingOpen] = useState (false);
+  const [isSettingOpen, setIsSettingOpen] = useState (true);
   const [isSecurityOpen, setIsSecurityOpen] = useState(false);
   const[isAboutOpen, setIsAboutOpen] = useState(false);
   const[isNotificationOpen, setIsNotificationOpen] = useState(false);
@@ -22,9 +22,10 @@ export default function AccountPage({ user }: { user: User }) {
     bio: user.bio || '',
   });
   const [isSaving, setIsSaving] = useState(false);
+  
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-
+console.log(JSON.stringify(user));
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -70,14 +71,18 @@ export default function AccountPage({ user }: { user: User }) {
   };
 
   const handleSave = async () => {
-    // Simple validation without trim()
-    if (!formData.firstName || !formData.lastName || !formData.bio) {
-      setError('All fields are required');
+    if (!formData.username && !formData.bio) {
+      setError('No modifications were made');
+      return;
+    }
+    if (formData.username.includes(" ")){
+      setError('Spaces are not allowed in userame fomat');
       return;
     }
   
     setIsSaving(true);
     setError(null);
+    setSuccess(null);
   
     try {
       const response = await fetch('/api/user/update', {
@@ -86,19 +91,20 @@ export default function AccountPage({ user }: { user: User }) {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          userId: user.userId,
-          name: `${formData.firstName} ${formData.lastName}`,
+          userId: user.id,
+          username: formData.username,
           bio: formData.bio
         }),
       });
   
       if (!response.ok) {
+        const data = await response.json();
         throw new Error('Failed to update profile');
       }
   
       setSuccess('Profile updated successfully!');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to save profile');
+    } catch (err:unknown) {
+      setError('Failed to save profile');
     } finally {
       setIsSaving(false);
     }
@@ -207,7 +213,7 @@ export default function AccountPage({ user }: { user: User }) {
               <nav className="space-y-1">
                 <button
                 onClick={()=> {
-                  setIsSettingOpen(!isSettingOpen);
+                  setIsSettingOpen(true);
                   setIsSecurityOpen(false);
                   setIsAboutOpen(false);
                   setIsNotificationOpen(false)
@@ -281,9 +287,9 @@ export default function AccountPage({ user }: { user: User }) {
                       </label>
                       <input
                         type="text"
-                        name="first-name"
-                        id="first-name"
-                        defaultValue={user.name?.split(' ')[0] || ''}
+                        name="username"
+                        id="username"
+                        value={formData.username}
                         onChange = {handleChange}
                         className="mt-1 block w-full rounded-md border border-[#00bfff] py-2 px-3 shadow-sm focus:border-[#00bfff] focus:outline-none focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
                       />
@@ -295,9 +301,9 @@ export default function AccountPage({ user }: { user: User }) {
                       </label>
                       <input
                         type="text"
-                        name="last-name"
-                        id="last-name"
-                        defaultValue={user.name?.split(' ')[1] || ''}
+                        name="email"
+                        id="email"
+                        value={formData.email}
                         onChange = {handleChange}
                         className="mt-1 block w-full rounded-md border border-[#00bfff] py-2 px-3 shadow-sm focus:border-[#00bfff] focus:outline-none focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
                       />
@@ -312,7 +318,7 @@ export default function AccountPage({ user }: { user: User }) {
                       type="text"
                       name="bio"
                       id="bio"
-                      value={formData.firstName}
+                      value={formData.bio}
                       onChange={handleChange}
                       className="block w-full rounded-md border border-[#00bfff] shadow-sm py-2 px-3 focus:border-[#00bfff] focus:ring-[#00bfff] sm:text-sm text-white bg-[#001a33]"
                       placeholder="Tell us a little about yourself"
@@ -325,9 +331,9 @@ export default function AccountPage({ user }: { user: User }) {
                 <div className="mt-6 flex justify-end">
                 <button
                       onClick={handleSave}
-                      disabled={isSaving || !formData.firstName || !formData.lastName || !formData.bio}
+                      disabled={isSaving || !formData.username || !formData.bio}
                       className={`px-4 py-2 rounded text-white ${
-                        isSaving || !formData.firstName || !formData.lastName || !formData.bio
+                        isSaving || !formData.username || !formData.bio
                           ? 'bg-gray-400 cursor-not-allowed'
                           : 'bg-[#00bfff] hover:bg-[#008c99]'
                       }`}

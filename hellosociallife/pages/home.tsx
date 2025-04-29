@@ -19,6 +19,9 @@ const handleLogout = async () => {
     console.error('Logout failed:', err);
   }
 };
+const handleAccount = () => {
+  window.location.href = "/account";
+};
 
 export default function Home({ user }: any) {
   return (
@@ -55,10 +58,11 @@ export default function Home({ user }: any) {
 
         <div className="space-y-4 w-full max-w-md">
           <button
-            onClick={handleLogout}
+            onClick = {handleAccount}
             className="w-full py-3 text-base bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_20px_rgba(0,191,255,0.6)] hover:bg-[#001d3d] transition-all duration-300"
           >
-            <span>Change Bio</span>
+            
+            <span>Account</span>
           </button>
         </div>
 
