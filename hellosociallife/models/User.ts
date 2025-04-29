@@ -75,7 +75,6 @@ export class User {
   private _image: string | null;
 
 
-
   constructor(username: string, email: string, password: string, bio?: string, image?: string, id?: mongoose.Types.ObjectId) {
     this._username = username;
     this._email = email;
@@ -189,6 +188,47 @@ export class User {
       // Never include password in toObject output
     };
   }
+  // Add this to your User class (inside the class definition)
+public static async findOneAndUpdate(
+ userId: string, updates: {
+  username?: string;
+  email?: string;
+  bio?: string;
+  image?: string;
+}): Promise<User | null> {
+  const UserModel = mongoose.model<IUserDocument>('User');
+  
+  // Validate updates
+  const allowedUpdates = ['username', 'email', 'bio', 'image'];
+  const updatesToApply: Record<string, any> = {};
+  
+  for (const key in updates) {
+    if (allowedUpdates.includes(key) && updates[key as keyof typeof updates] !== undefined) {
+      updatesToApply[key] = updates[key as keyof typeof updates];
+    }
+  }
+
+  // Special handling for email validation
+  if (updatesToApply.email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(updatesToApply.email)) {
+      throw new Error("Invalid email format");
+    }
+  }
+
+  const updatedDoc = await UserModel.findOneAndUpdate(
+    { userId },
+    updatesToApply,
+    { 
+      new: true,
+      runValidators: true // Ensure schema validations run
+    }
+  );
+
+  if (!updatedDoc) return null;
+  
+  return User.fromDocument(updatedDoc);
+}
 }
 
 // 4. Create Mongoose Model

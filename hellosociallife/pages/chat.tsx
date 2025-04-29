@@ -65,41 +65,68 @@ export default function ChatPage({ user }: { user: any }) {
   }, [messages]); // Dependency on messages to trigger scroll
 
   return (
-    <div style={{ maxWidth: '600px', margin: '0 auto', padding: '1rem' }}>
-      <h1>💬 Live Chat</h1>
-
+    <div style={{ maxWidth: '500px', margin: '0 auto', padding: '1rem' }}>
+      <h1 style={{ color: '#00bfff', textAlign: 'center', fontSize: '2rem', marginBottom: '1rem' }}>
+        💬 Live Chat
+      </h1>
+  
       <div
         id="chat-container"
         style={{
-          height: '400px',
+          height: '650px',  // Minskat höjd på chattrutan
           overflowY: 'auto',
-          border: '1px solid #ccc',
-          borderRadius: '8px',
-          padding: '0.5rem',
+          border: '2px solid #00bfff',
+          borderRadius: '12px',
+          padding: '1rem',
           marginBottom: '1rem',
-          background: '#f9f9f9',
+          background: '#001a33',
+          color: '#fff',
         }}
       >
         {messages.map((msg) => (
-          <div key={msg._id} style={{ margin: '0.5rem 0' }}>
-            <strong>{msg.username}:</strong> {msg.content}
+          <div key={msg._id} style={{ margin: '0.5rem 0', padding: '0.5rem', borderRadius: '8px', background: '#003366' }}>
+            <strong style={{ color: '#00bfff' }}>{msg.username}:</strong> {msg.content}
           </div>
         ))}
       </div>
-
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
+  
+      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'space-between' }}>
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
           placeholder="Type your message..."
-          style={{ flex: 1, padding: '0.5rem' }}
+          style={{
+            flex: 1,
+            padding: '0.75rem',
+            borderRadius: '8px',
+            border: '2px solid #00bfff',
+            background: '#001a33',
+            color: '#fff',
+            fontSize: '1rem',
+            outline: 'none',
+          }}
         />
-        <button onClick={sendMessage} style={{ padding: '0.5rem 1rem' }}>
+        <button
+          onClick={sendMessage}
+          style={{
+            padding: '0.75rem 1rem',
+            background: '#003366',
+            color: '#00bfff',
+            border: '2px solid #00bfff',
+            borderRadius: '8px',
+            cursor: 'pointer',
+            transition: 'background-color 0.3s ease',
+          }}
+          onMouseEnter={(e) => e.target.style.backgroundColor = '#001a33'}
+          onMouseLeave={(e) => e.target.style.backgroundColor = '#003366'}
+        >
           Send
         </button>
       </div>
     </div>
   );
+  
+  
 }
