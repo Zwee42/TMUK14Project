@@ -1,5 +1,7 @@
-import { GetServerSidePropsContext, Redirect } from 'next';
+import { GetServerSidePropsContext, NextApiRequest, Redirect } from 'next';
 import jwt from 'jsonwebtoken';
+import { SessionUser } from '@/models/sessionUser';
+
 
 export async function requireAuth(ctx: GetServerSidePropsContext, redirectTo = '/') {
   const { req } = ctx;
@@ -37,19 +39,23 @@ export async function requireAuth(ctx: GetServerSidePropsContext, redirectTo = '
   }
 }
 
-export async function hasSessionClient(): Promise<boolean> {
-  try {
-    const res = await fetch('/api/session', {
-      credentials: 'include',
-      cache: 'no-store',
-    });
+export function getTokenFromCookies(req: NextApiRequest): string | null {
+  const cookie = req.headers.cookie;
+  if (!cookie) return null;
 
-    if (res.ok) {
-      const data = await res.json();
-      return data.isLoggedIn;
-    } else
-      return false;
-  } catch (error) {
-    return false;
+  const match = cookie.match(/auth_token=([^;]+)/);
+  return match ? match[1] : null;
+}
+
+export function getUserFromRequest(req: NextApiRequest): SessionUser | null {
+  const token = getTokenFromCookies(req);
+  if (!token) return null;
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET!);
+    return decoded as SessionUser;
+  } catch (err) {
+    console.error('Invalid JWT:', err);
+    return null;
   }
 }
