@@ -33,7 +33,7 @@ describe('Signup API', () => {
     (User as unknown as jest.Mock).mockImplementation(() => ({
       id: '123',
       email: 'newuser@example.com',
-      name: 'newuser',
+      username: 'newuser',
       save: jest.fn().mockResolvedValueOnce(undefined),
     }));
 

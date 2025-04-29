@@ -15,7 +15,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
 } 
   const token = authToken.split('=')[1];
   try {
-    const user = jwt.verify(token, process.env.SECRET_KEY!);
+    const user = jwt.verify(token, process.env.JWT_SECRET!);
     res.status(200).json({ isLoggedIn: true, user });
   } catch {
     console.error('Error decoding token:');
