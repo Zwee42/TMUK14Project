@@ -93,7 +93,7 @@ export class User {
   get password() { return this._password; }
 
   // Setters with validation
-  set name(value: string) {
+  set username(value: string) {
     if (!value || value.length < 2) {
       throw new Error("Name must be at least 2 characters long");
     }

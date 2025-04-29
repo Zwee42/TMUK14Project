@@ -4,7 +4,7 @@ import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 interface FormData {
-  userName: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
@@ -12,7 +12,7 @@ interface FormData {
 
 export default function Home() {
   const [formData, setFormData] = useState<FormData>({
-    userName: "",
+    username: "",
     email: "",
     password: "",
     confirmPassword: "",
@@ -52,7 +52,7 @@ export default function Home() {
       },
       body: JSON.stringify({
         email: formData.email,
-        username: formData.userName,
+        username: formData.username,
         password: formData.password,
       }),
     });
@@ -77,9 +77,9 @@ export default function Home() {
     return (
       <div className="max-w-md mx-auto mt-10 p-6 bg-[#000814] rounded-xl shadow-md text-center text-white">
         <h2 className="text-3xl font-bold text-[#00bfff] drop-shadow-[0_0_12px_rgba(0,191,255,0.9)]">
-          Welcome, {formData.userName}!
+          Welcome, {formData.username}!
         </h2>
-        <p className="mt-4 text-gray-300">Your account has been created successfully, {formData.userName}.</p>
+        <p className="mt-4 text-gray-300">Your account has been created successfully, {formData.username}.</p>
       </div>
     );
   }
@@ -96,7 +96,7 @@ export default function Home() {
           type="text"
           name="userName"
           placeholder="Username"
-          value={formData.userName}
+          value={formData.username}
           onChange={handleChange}
           required
         />

@@ -22,10 +22,8 @@ export default function AccountPage({ user }: { user: User }) {
     bio: user.bio || '',
   });
   const [isSaving, setIsSaving] = useState(false);
-  
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-console.log(JSON.stringify(user));
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
