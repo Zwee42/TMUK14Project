@@ -1,8 +1,7 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { GetServerSideProps } from 'next';
 import io from 'socket.io-client';
-import { User } from '@/models/User';
-import { requireAuth } from '@/utils/auth'; // Assuming this function is in /lib/auth.ts
+import { requireAuth } from '@/utils/auth'; // Antag att denna funktion finns
 
 const socket = io('', { path: '/api/socketio' });
 
@@ -13,9 +12,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 export default function ChatPage({ user }: { user: any }) {
   const [messages, setMessages] = useState<any[]>([]);
   const [input, setInput] = useState('');
+  const chatRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    // Fetch initial messages
     const fetchMessages = async () => {
       const res = await fetch('/api/messages');
       const data = await res.json();
@@ -23,110 +22,85 @@ export default function ChatPage({ user }: { user: any }) {
     };
     fetchMessages();
 
-    // Initialize socket and listen for new messages
     socket.on('message', (msg: any) => {
       setMessages((prevMessages) => [...prevMessages, msg]);
     });
 
     return () => {
-      socket.off('message'); // Clean up socket listener on unmount
+      socket.off('message');
     };
   }, []);
 
-  // Send message to both the socket and database
   const sendMessage = async () => {
     if (!input.trim()) return;
 
     const newMessage = {
       username: user.username,
       content: input,
-      userId: user.userId, // Make sure userId is sent with the message
+      userId: user.userId,
     };
 
-    // Emit the message via socket
     socket.emit('message', newMessage);
 
-    // Save the message to the database
     await fetch('/api/messages', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newMessage),
     });
 
-    setInput(''); // Clear input after sending
+    setInput('');
   };
 
   useEffect(() => {
-    // Scroll to the bottom of the chat container when new messages are added
-    const chatContainer = document.getElementById('chat-container');
-    if (chatContainer) {
-      chatContainer.scrollTop = chatContainer.scrollHeight;
+    if (chatRef.current) {
+      chatRef.current.scrollTop = chatRef.current.scrollHeight;
     }
-  }, [messages]); // Dependency on messages to trigger scroll
+  }, [messages]);
 
   return (
-    <div style={{ maxWidth: '500px', margin: '0 auto', padding: '1rem' }}>
-      <h1 style={{ color: '#00bfff', textAlign: 'center', fontSize: '2rem', marginBottom: '1rem' }}>
-        💬 Live Chat
-      </h1>
-  
+    <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#000814] via-[#000d1a] to-[#001a33] text-gray-200 p-8">
+      {/* Header */}
+      <div className="text-center mb-6">
+        <div className="flex justify-center items-center gap-4">
+          <span className="text-[4rem] md:text-[5rem] font-light">🌐</span>
+          <div className="flex gap-2 text-[5rem] md:text-[6rem] font-extralight tracking-widest text-[#00bfff] drop-shadow-[0_0_25px_rgba(0,191,255,0.8)]">
+            <span className="border-l-4 border-[#00bfff] pl-3">H</span>
+            <span className="font-[cursive]">S</span>
+            <span className="border-b-4 border-[#00bfff] pb-2">L</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Chat Container */}
       <div
-        id="chat-container"
-        style={{
-          height: '650px',  // Minskat höjd på chattrutan
-          overflowY: 'auto',
-          border: '2px solid #00bfff',
-          borderRadius: '12px',
-          padding: '1rem',
-          marginBottom: '1rem',
-          background: '#001a33',
-          color: '#fff',
-        }}
+        ref={chatRef}
+        className="w-full max-w-2xl bg-[#000814] border-2 border-[#00bfff] rounded-xl shadow-[0_0_20px_rgba(0,191,255,0.3)] p-4 mb-4 overflow-y-auto"
+        style={{ height: '500px' }}
       >
         {messages.map((msg) => (
-          <div key={msg._id} style={{ margin: '0.5rem 0', padding: '0.5rem', borderRadius: '8px', background: '#003366' }}>
-            <strong style={{ color: '#00bfff' }}>{msg.username}:</strong> {msg.content}
+          <div key={msg._id} className="mb-3 p-3 rounded-lg bg-[#001d3d]">
+            <strong className="text-[#00bfff]">{msg.username}:</strong> {msg.content}
           </div>
         ))}
       </div>
-  
-      <div style={{ display: 'flex', gap: '0.5rem', justifyContent: 'space-between' }}>
+
+      {/* Input + Send Button */}
+      <div className="flex w-full max-w-2xl gap-2">
         <input
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && sendMessage()}
           placeholder="Type your message..."
-          style={{
-            flex: 1,
-            padding: '0.75rem',
-            borderRadius: '8px',
-            border: '2px solid #00bfff',
-            background: '#001a33',
-            color: '#fff',
-            fontSize: '1rem',
-            outline: 'none',
-          }}
+          className="flex-1 py-3 px-4 rounded-xl bg-[#000814] text-white border-2 border-[#00bfff] focus:outline-none focus:ring-2 focus:ring-[#00bfff] transition"
         />
         <button
           onClick={sendMessage}
-          style={{
-            padding: '0.75rem 1rem',
-            background: '#003366',
-            color: '#00bfff',
-            border: '2px solid #00bfff',
-            borderRadius: '8px',
-            cursor: 'pointer',
-            transition: 'background-color 0.3s ease',
-          }}
-          onMouseEnter={(e) => (e.target as HTMLElement).style.backgroundColor = '#001a33'}
-          onMouseLeave={(e) => (e.target as HTMLElement).style.backgroundColor = '#003366'}
+          className="px-6 py-3 text-base bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_20px_rgba(0,191,255,0.6)] hover:bg-[#001d3d] transition-all duration-300"
         >
           Send
         </button>
       </div>
     </div>
   );
-  
-  
 }
