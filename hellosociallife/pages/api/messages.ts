@@ -7,8 +7,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await dbConnect();
 
   if (req.method === 'GET') {
-    const messages = await MessageModel.find().sort({ createdAt: 1 }).limit(100);
-    return res.status(200).json(messages);
+    const messages = await MessageModel.find().sort({ createdAt: -1 }).limit(1000);
+    return res.status(200).json(messages.reverse());
   }
 
   if (req.method === 'POST') {
