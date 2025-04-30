@@ -2,7 +2,6 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';
 import { User } from '@/models/User';
 
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -55,7 +54,7 @@ export default async function handler(
       user: {
         id: user.id,
         email: user.email,
-        username: user.username // Note: In your User class, name is used for username
+        username: username // Note: In your User class, name is used for username
       }
     });
 
