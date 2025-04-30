@@ -11,15 +11,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     return res.status(200).json(messages.reverse());
   }
 
-  if (req.method === 'POST') {
-    const { userId, username, content } = req.body;
-    console.log('Received message:', { userId, username, content });
-
-    if (!userId || !username || !content) return res.status(400).json({ error: 'Missing fields' });
-
-    const msg = await MessageModel.create({ userId, username, content });
-    return res.status(201).json(msg);
-  }
-
   return res.status(405).end();
 }
