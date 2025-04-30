@@ -97,7 +97,6 @@ export default function ChatPage({ user }: { user: any }) {
         <button
           onClick={sendMessage}
           className="px-6 py-3 text-base bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_20px_rgba(0,191,255,0.6)] hover:bg-[#001d3d] transition-all duration-300"
-        >
           Send
         </button>
       </div>
