@@ -4,7 +4,7 @@ on:
   push:
     branches:
       - main  # Trigger deployment on pushes to the 'main' branch
-      - deploy-test  # Trigger deployment on pushes to the 'deploy' branch
+
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,6 +20,7 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+        working-directory: ./hellosociallife  # Change working directory to 'hellosociallife'
 
       - name: Set up SSH
         uses: webfactory/ssh-agent@v0.5.3
@@ -36,3 +37,4 @@ jobs:
           EOF
         env:
           VPS_SSH_HOST: ${{ secrets.VPS_SSH_HOST }}
+        working-directory: ./hellosociallife  # Change working directory to 'hellosociallife'
