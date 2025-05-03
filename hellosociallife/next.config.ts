@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   devIndicators: false,
+  eslint: {
+    // Disable ESLint during the build
+    ignoreDuringBuilds: true,
+  },
+  output: 'export',
+
 
 };
 

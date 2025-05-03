@@ -1,5 +1,5 @@
 import { UserCircleIcon, CogIcon, BellIcon, ShieldCheckIcon, ArrowRightOnRectangleIcon } from '@heroicons/react/24/outline';
-import { EyeIcon, EyeSlashIcon, EnvelopeIcon, LockClosedIcon } from '@heroicons/react/24/outline';
+import { EyeIcon, EyeSlashIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
 
 import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
@@ -38,28 +38,28 @@ export default function AccountPage({ user }: { user: User }) {
    window.location.href = "/login";
   };
 
-  const handleDeleteAccount = async () => {
-    const confirmDelete = window.confirm("Are you sure you want to delete your account?");
-    if (!confirmDelete) return;
+  // const handleDeleteAccount = async () => {
+  //   const confirmDelete = window.confirm("Are you sure you want to delete your account?");
+  //   if (!confirmDelete) return;
 
-    const res = await fetch('/api/deleteUser', {
-      method: 'DELETE',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({}),
-    });
+  //   const res = await fetch('/api/deleteUser', {
+  //     method: 'DELETE',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify({}),
+  //   });
 
-    const data = await res.json();
+  //   const data = await res.json();
 
-    if (res.ok) {
-      alert('Account deleted successfully');
-      localStorage.removeItem('userEmail');
-      window.location.href = 'account/security';
-    } else {
-      alert('Failed to delete account: ' + data.error);
-    }
-  };
+  //   if (res.ok) {
+  //     alert('Account deleted successfully');
+  //     localStorage.removeItem('userEmail');
+  //     window.location.href = 'account/security';
+  //   } else {
+  //     alert('Failed to delete account: ' + data.error);
+  //   }
+  // };
 
   const handleSave = async () => {
     if (!formData.username && !formData.bio) {

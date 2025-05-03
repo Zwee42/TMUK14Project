@@ -7,7 +7,6 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
 };
 
 export default function SecurityPage() {
-    const router = useRouter();
 
     const handleDeleteAccount = async () => {
         const confirmDelete = window.confirm("Are you sure you want to delete your account?");
