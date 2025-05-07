@@ -32,18 +32,18 @@ jobs:
         working-directory: ./hellosociallife
 
 
-  build:
+  coverage support:
     runs-on: ubuntu-latest
     
     steps:
       - uses: actions/checkout@v4
-      
+
       - name: Install dependencies
         run: npm install
         working-directory: ./hellosociallife 
       
       - name: Run build
-        run: npm run build
+        run: npm run test:coverage
         working-directory: ./hellosociallife 
 
       - name: Upload Artifact
