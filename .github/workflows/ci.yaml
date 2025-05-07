@@ -42,7 +42,7 @@ jobs:
         run: npm install
         working-directory: ./hellosociallife 
       
-      - name: Run build
+      - name: Run test:coverage
         run: npm run test:coverage
         working-directory: ./hellosociallife 
 
