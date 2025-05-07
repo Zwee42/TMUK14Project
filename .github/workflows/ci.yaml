@@ -31,7 +31,7 @@ jobs:
         run: npm run test
         working-directory: ./hellosociallife
 
-jobs:
+
   build:
     runs-on: ubuntu-latest
     steps:
