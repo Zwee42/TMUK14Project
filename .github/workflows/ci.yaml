@@ -30,3 +30,16 @@ jobs:
       - name: Run tests
         run: npm run test
         working-directory: ./hellosociallife
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install && npm run build 
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: my-artifact
+          path: ./hellosociallife
