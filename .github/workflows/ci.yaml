@@ -32,7 +32,7 @@ jobs:
         working-directory: ./hellosociallife
 
 
-  coverage support:
+  coverage_support:
     runs-on: ubuntu-latest
     
     steps:
