@@ -49,6 +49,7 @@ export function getTokenFromCookies(req: NextApiRequest): string | null {
 
 export function getUserFromRequest(req: NextApiRequest): SessionUser | null {
   const token = getTokenFromCookies(req);
+  console.log("Headers:", req.headers.cookie);
   if (!token) return null;
 
   try {
