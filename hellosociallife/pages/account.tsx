@@ -21,6 +21,7 @@ export default function AccountPage({ user }: { user: User }) {
     email: user.email || '',
     bio: user.bio || '',
   });
+  const[use, setUse]= useState <User | null> (null)
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -76,7 +77,7 @@ export default function AccountPage({ user }: { user: User }) {
     setSuccess(null);
   
     try {
-      const response = await fetch('/api/user/update', {
+      const response = await fetch('/api/updateAccount', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -87,13 +88,29 @@ export default function AccountPage({ user }: { user: User }) {
           bio: formData.bio
         }),
       });
-  
       if (!response.ok) {
         const data = await response.json();
         throw new Error('Failed to update profile');
       }
+      
+        const meRes = await fetch('/api/data', {
+          method: 'GET',
+          credentials: 'include',
+          headers: {
+            'Cache-Control': 'no_cache',
+          },
+        });
+        if (!meRes.ok){
+          throw new Error('failed to fetch updated user information')
+        }
+        const updatedUser = await meRes.json();
+        
+        // Uppdatera din state eller context med nya datan
+        setUse(updatedUser);
+        setSuccess('Profile is updated successfully!');
   
-      setSuccess('Profile updated successfully!');
+  
+      
     } catch (err:unknown) {
       setError('Failed to save profile');
     } finally {
@@ -493,3 +510,5 @@ export default function AccountPage({ user }: { user: User }) {
     </div>
   );
 };
+
+

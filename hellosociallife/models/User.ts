@@ -190,12 +190,15 @@ export class User {
   }
   // Add this to your User class (inside the class definition)
 public static async findOneAndUpdate(
- userId: string, updates: {
+ userId: string, 
+ updates: {
   username?: string;
   email?: string;
   bio?: string;
   image?: string;
-}): Promise<User | null> {
+},
+options: {new: boolean}
+): Promise<User | null> {
   const UserModel = mongoose.model<IUserDocument>('User');
   
   // Validate updates
@@ -217,7 +220,7 @@ public static async findOneAndUpdate(
   }
 
   const updatedDoc = await UserModel.findOneAndUpdate(
-    { userId },
+    { _id: new mongoose.Types.ObjectId (userId) },
     updatesToApply,
     { 
       new: true,
