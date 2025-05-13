@@ -2,6 +2,7 @@
 import mongoose, { Document, Schema, Model } from 'mongoose';
 import bcrypt from 'bcryptjs';
 
+
 // 1. Define Mongoose Interface
 export interface IUserDocument extends Document {
   username: string;
@@ -9,6 +10,8 @@ export interface IUserDocument extends Document {
   password: string;
   bio?: string;
   image?: string;
+  resetToken?: string;
+  resetTokenExpire?: Date;
   comparePassword(candidatePassword: string): Promise<boolean>;
 }
 
@@ -44,7 +47,9 @@ const UserSchema = new Schema<IUserDocument>({
     }
   },
   bio: { type: String, default: null },
-  image: { type: String, default: null }
+  image: { type: String, default: null },
+  resetToken: { type: String, default: null },
+  resetTokenExpire: { type: Date, default: null }
 });
 
 // Password hashing middleware
@@ -157,6 +162,7 @@ export class User {
     return User.fromDocument(doc);
   }
 
+  
   public static fromDocument(doc: IUserDocument): User {
     const user = new User(
       doc.username, 
