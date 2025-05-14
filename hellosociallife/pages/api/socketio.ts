@@ -21,6 +21,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 
   const io = new Server(res.socket.server as any, {
     path: '/api/socketio',
+    cors: {
+      origin: 'http://212.25.142.1', // Allow this origin
+      methods: ['GET', 'POST'],
+    },
   });
 
   res.socket.server.io = io;
@@ -32,6 +36,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
       const saved = await MessageModel.create(msg);
       io.emit('message', saved);
     });
+
+    socket.on('join-voice', (roomId) => {
+      socket.join(roomId);
+      socket.to(roomId).emit('voice-user-joined');
+    });
+
+    socket.on('voice-signal', ({ roomId, data }) => {
+      socket.to(roomId).emit('voice-signal', { data });
+    });
+
+    socket.on('leave-voice', (roomId) => {
+      socket.leave(roomId);
+    });
+
   });
 
   res.end();
