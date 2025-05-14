@@ -21,10 +21,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
 
   const io = new Server(res.socket.server as any, {
     path: '/api/socketio',
-    cors: {
-      origin: 'http://212.25.142.1', // Allow this origin
-      methods: ['GET', 'POST'],
-    },
   });
 
   res.socket.server.io = io;
