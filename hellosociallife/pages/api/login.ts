@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import dbConnect from '@/lib/mongodb';
-import { User } from '@/models/User';
+import { UserModel } from '@/models/User';
 import bcrypt from 'bcryptjs';
 
 const SECRET_KEY = process.env.JWT_SECRET || 'default_secret'; // fallback for tests
@@ -20,21 +20,22 @@ export default async function handler(
   try {
     await dbConnect();
 
-    // Find user by email or username
-    const user = await User.findOne(emailOrUsername);
+    const user = await UserModel.findOne({
+      $or: [
+        { email: emailOrUsername },
+        { username: emailOrUsername }
+      ]
+    }).select('+password'); // Viktigt!
 
     if (!user) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(401).json({ error: 'Fel e-post eller användarnamn' });
     }
-
-    // Compare passwords (if your user model doesn't have comparePassword, use bcrypt directly)
-    const isMatch = await user.comparePassword?.(password) ?? await bcrypt.compare(password, user.password);
-
+    console.log(user);
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid credentials' });
+      return res.status(400).json({ message: 'Invalid ddcredentials' });
     }
 
-    // Create JWT token
     const token = jwt.sign({
       userId: user.id,
       username: user.username,
@@ -43,7 +44,6 @@ export default async function handler(
       bio: user.bio
     }, SECRET_KEY, { expiresIn: '1h' });
 
-    // Set the token in an HTTP-only cookie
     res.setHeader('Set-Cookie', serialize('auth_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
