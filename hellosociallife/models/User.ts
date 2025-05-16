@@ -34,7 +34,7 @@ const UserSchema = new Schema<IUserDocument>({
   password: {
     type: String,
     required: true,
-    select: false, // Password won't be returned in queries by default
+    select: true, 
     minlength: 8,
     validate: {
       validator: function(v: string) {
@@ -233,6 +233,7 @@ options: {new: boolean}
   return User.fromDocument(updatedDoc);
 }
 }
+
 
 // 4. Create Mongoose Model
 export const UserModel = mongoose.models.User || mongoose.model<IUserDocument>('User', UserSchema);

@@ -10,8 +10,9 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
 
-export default function AccountPage({ user }: { user: User }) {
+export default function AccountPage({ user }: { user:User }) {
   // State management
+ 
   const [isSettingOpen, setIsSettingOpen] = useState (true);
   const [isSecurityOpen, setIsSecurityOpen] = useState(false);
   const[isAboutOpen, setIsAboutOpen] = useState(false);
@@ -20,11 +21,13 @@ export default function AccountPage({ user }: { user: User }) {
     username: user.username || '',
     email: user.email || '',
     bio: user.bio || '',
+    image : user.image || '',
   });
-  const[use, setUse]= useState <User | null> (null)
+  
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+ 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({
@@ -35,9 +38,41 @@ export default function AccountPage({ user }: { user: User }) {
     setSuccess(null);
   };
 
-  const handleLogout = () => {
-   window.location.href = "/login";
+  const fetchAccount = async () =>{
+    console.log(currentpassword);
+     const response = await fetch('/api/updateAccount', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          userId: user.id,
+          username: formData.username,
+          bio: formData.bio,
+          image : formData.image,
+          email : newEmail || formData.email,
+          currentpassword,
+
+
+        }),
+      });
+      return response;
+
   };
+
+  const handleLogout = async () => {
+  try {
+    const res = await fetch('/api/logout', {
+      method: 'POST',
+    });
+
+    if (res.ok) {
+      window.location.href = '/login';
+    }
+  } catch (err) {
+    console.error('Logout failed:', err);
+  }
+};
 
   const handleDeleteAccount = async () => {
     const confirmDelete = window.confirm("Are you sure you want to delete your account?");
@@ -75,42 +110,18 @@ export default function AccountPage({ user }: { user: User }) {
     setIsSaving(true);
     setError(null);
     setSuccess(null);
+   
   
     try {
-      const response = await fetch('/api/updateAccount', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          userId: user.id,
-          username: formData.username,
-          bio: formData.bio
-        }),
-      });
+      const response = await fetchAccount();
       if (!response.ok) {
         const data = await response.json();
         throw new Error('Failed to update profile');
       }
+      const data = await response.json();
+      const updatedUser = data.user;
       
-        const meRes = await fetch('/api/data', {
-          method: 'GET',
-          credentials: 'include',
-          headers: {
-            'Cache-Control': 'no_cache',
-          },
-        });
-        if (!meRes.ok){
-          throw new Error('failed to fetch updated user information')
-        }
-        const updatedUser = await meRes.json();
-        
-        // Uppdatera din state eller context med nya datan
-        setUse(updatedUser);
         setSuccess('Profile is updated successfully!');
-  
-  
-      
     } catch (err:unknown) {
       setError('Failed to save profile');
     } finally {
@@ -118,7 +129,7 @@ export default function AccountPage({ user }: { user: User }) {
     }
   };
   const [showPassword, setShowPassword] = useState(false);
-  const [currentPassword, setCurrentPassword] = useState('');
+  const [currentpassword, setCurrentpassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [newEmail, setNewEmail] = useState('');
@@ -127,7 +138,7 @@ export default function AccountPage({ user }: { user: User }) {
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
   const handleChangePassword = async () => {
-    if (!currentPassword || !newPassword || !confirmPassword) {
+    if (!currentpassword || !newPassword || !confirmPassword) {
       setSettingsError('All password fields are required');
       return;
     }
@@ -149,7 +160,7 @@ export default function AccountPage({ user }: { user: User }) {
       // Simulate API call
       await new Promise(resolve => setTimeout(resolve, 1000));
       setSettingsSuccess("Password changed successfully!");
-      setCurrentPassword('');
+      setCurrentpassword('');
       setNewPassword('');
       setConfirmPassword('');
     } catch (error) {
@@ -160,33 +171,43 @@ export default function AccountPage({ user }: { user: User }) {
   };
 
   // Email change handler
-  const handleChangeEmail = async () => {
-    if (!currentPassword || !newEmail) {
-      setSettingsError('Current password and new email are required');
-      return;
+ const handleChangeEmail = async () => {
+  if (!currentpassword || !newEmail) {
+    setSettingsError('Current password and new email are required');
+    return;
+  }
+
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  if (!emailRegex.test(newEmail)) {
+    setSettingsError("Please enter a valid email address");
+    return;
+  }
+
+  setIsEmailLoading(true);
+  setSettingsError(null);
+  setSuccess(null);
+  setError(null);
+
+  try {
+  const response = await fetchAccount();
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      throw new Error(data.message || 'Failed to update email!');
     }
 
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(newEmail)) {
-      setSettingsError("Please enter a valid email address");
-      return;
-    }
+    const updatedUser = data.user;
+    setSuccess('Email is updated successfully!');
+    setFormData({... formData, email:newEmail})
+  } catch (err: unknown) {
+    setError('Failed to save email');
+  } finally {
+    setIsEmailLoading(false);
+  }
 
-    setIsEmailLoading(true);
-    setSettingsError(null);
+};
 
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSettingsSuccess("Email change request sent! Please check your inbox.");
-      setCurrentPassword('');
-      setNewEmail('');
-    } catch (error) {
-      setSettingsError("Failed to update email");
-    } finally {
-      setIsEmailLoading(false);
-    }
-  };
 
 
   if (!user) {
@@ -383,8 +404,8 @@ export default function AccountPage({ user }: { user: User }) {
                   <input
                     id="currentPassword"
                     type={showPassword ? 'text' : 'password'}
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
+                    value={currentpassword}
+                    onChange={(e) => setCurrentpassword(e.target.value)}
                     className="w-full bg-[#001a33] border border-[#00bfff] rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-[#00bfff]"
                     required
                   />
@@ -459,7 +480,7 @@ export default function AccountPage({ user }: { user: User }) {
                         <EnvelopeIcon className="h-5 w-5 text-gray-400" />
                       </div>
                       <input
-                        id="newEmail"
+                        id="email"
                         type="email"
                         value={newEmail}
                         onChange={(e) => setNewEmail(e.target.value)}
