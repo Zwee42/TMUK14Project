@@ -25,7 +25,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   await user.save();
   console.log("After saving:", await UserModel.findOne({ email }));
 
-  const resetUrl = `http://localhost:3000/reset-password?token=${resetToken}`;
+  const resetUrl = (process.env.NODE_ENV=="production"?"https://hsl.zwee.dev":`http://localhost:3000`)+`/reset-password?token=${resetToken}`;
 
 await sendResetEmail(email, resetUrl);
 
