@@ -24,7 +24,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
   res.socket.server.io = io;
 
   await dbConnect();
-<<<<<<< HEAD
 
   const roomUsers = new Map<string, Map<string, string>>();
 
@@ -87,15 +86,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponseS
   });
 
 
-=======
-  io.on('connection', (socket) => {
-    socket.on('message', async (msg) => { // anropar socker med nyckeln message
-      const saved = await MessageModel.create(msg);
-      io.emit('message', saved);
-    });    
-
-
-    
     socket.on('directmessage', async ({to, directmessage}) => {
       console.log("received message", directmessage);
       const saved = await DirectMessageModel.create(directmessage); // messagemodel, fel. ska använda DirectMessage för models
@@ -121,7 +111,6 @@ userSockets[normalizedKey] = socket.id;
 
   socket.on('disconnect', () => {
     delete userSockets[socket.data.userId]
->>>>>>> a177bdd7c5c6958bae922e423ee6fbe26ff2190d
   });
 
   //   socket.on('directmessage', ({ to, message }) => {
