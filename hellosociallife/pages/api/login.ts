@@ -33,7 +33,7 @@ export default async function handler(
     console.log(user);
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: 'Invalid ddcredentials' });
+      return res.status(401).json({ message: 'Invalid ddcredentials' });
     }
 
     const token = jwt.sign({
