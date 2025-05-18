@@ -59,7 +59,7 @@ export default function Home({ user }: any) {
 
         <div className="space-y-4 w-full max-w-md">
           <button
-            onClick={() => window.location.href = "/chat"}
+            onClick={() => window.location.href = "/chat_option"}
             className="w-full py-3 text-base bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_20px_rgba(0,191,255,0.6)] hover:bg-[#001d3d] transition-all duration-300"
           >
             <span>Chat</span>
