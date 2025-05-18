@@ -30,11 +30,15 @@ export default function ResetPasswordPage() {
       setMessage(`❌ ${data.error || 'Something went wrong'}`);
     }
   };
+  const reg_button = (e: React.MouseEvent) => {
+    e.preventDefault();
+    window.location.href = "/";
+  };
 
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-r from-[#001a33] via-[#003366] to-[#004d7a] text-gray-200 p-8 font-sans">
       <h2 className="text-3xl mb-6 font-semibold text-[#00bfff] drop-shadow-[0_0_12px_rgba(0,191,255,0.9)]">
-        Återställ lösenord
+        Reset Password
       </h2>
 
       <form className="flex flex-col gap-6" onSubmit={handleReset}>
@@ -66,13 +70,20 @@ export default function ResetPasswordPage() {
             className="mt-2 p-3 bg-[#000814] border-2 border-[#00bfff] text-white rounded-xl w-72 focus:outline-none focus:ring-2 focus:ring-[#00bfff]"
             required
           />
-        </div>
+        </div> 
 
         <button
           type="submit"
           className="px-10 py-3 mt-6 text-lg bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_15px_rgba(0,191,255,0.4)] transition-all duration-300 hover:bg-[#001a33]"
         >
-          Återställ
+          Reset
+        </button>
+
+        <button
+          onClick={reg_button}
+          className="text-lg text-[#00bfff] hover:underline mt-4"
+        >
+          Back to Startpage
         </button>
 
         {message && (
