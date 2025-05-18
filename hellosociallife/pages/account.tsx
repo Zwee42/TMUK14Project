@@ -23,7 +23,8 @@ export default function AccountPage({ user }: { user:User }) {
     bio: user.bio || '',
     image : user.image || '',
   });
-  
+  console.log(user);
+  console.log(formData);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -115,11 +116,11 @@ export default function AccountPage({ user }: { user:User }) {
     try {
       const response = await fetchAccount();
       if (!response.ok) {
-        const data = await response.json();
+        //const data = await response.json();
         throw new Error('Failed to update profile');
       }
       const data = await response.json();
-      const updatedUser = data.user;
+      setFormData({...formData, email: data.email, bio : data.bio, username: data.username, image: data.image });
       
         setSuccess('Profile is updated successfully!');
     } catch (err:unknown) {
@@ -130,45 +131,15 @@ export default function AccountPage({ user }: { user:User }) {
   };
   const [showPassword, setShowPassword] = useState(false);
   const [currentpassword, setCurrentpassword] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+
   const [newEmail, setNewEmail] = useState('');
   const [settingsError, setSettingsError] = useState<string | null>(null);
   const [settingsSuccess, setSettingsSuccess] = useState<string | null>(null);
   const [isPasswordLoading, setIsPasswordLoading] = useState(false);
   const [isEmailLoading, setIsEmailLoading] = useState(false);
-  const handleChangePassword = async () => {
-    if (!currentpassword || !newPassword || !confirmPassword) {
-      setSettingsError('All password fields are required');
-      return;
-    }
 
-    if (newPassword !== confirmPassword) {
-      setSettingsError("Passwords don't match");
-      return;
-    }
 
-    if (newPassword.length < 8) {
-      setSettingsError("Password must be at least 8 characters");
-      return;
-    }
-
-    setIsPasswordLoading(true);
-    setSettingsError(null);
-
-    try {
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
-      setSettingsSuccess("Password changed successfully!");
-      setCurrentpassword('');
-      setNewPassword('');
-      setConfirmPassword('');
-    } catch (error) {
-      setSettingsError("Failed to update password");
-    } finally {
-      setIsPasswordLoading(false);
-    }
-  };
+ 
 
   // Email change handler
  const handleChangeEmail = async () => {
@@ -189,23 +160,37 @@ export default function AccountPage({ user }: { user:User }) {
   setError(null);
 
   try {
-  const response = await fetchAccount();
+    console.log(currentpassword);
+    const response = await fetch('/api/change-email', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include', 
+      body: JSON.stringify({
+        email: newEmail,  // Använd newEmail istället för email
+        currentPassword : currentpassword,  // Se till att namnet matchar backend
+      }),
+    });
 
     const data = await response.json();
+    console.log('Response:', response, 'Data:', data);
 
     if (!response.ok) {
-      throw new Error(data.message || 'Failed to update email!');
+      setSettingsError(data.message || 'Failed to update email!');
+      return;  // Lägg till return här för att avbryta vid fel
     }
 
-    const updatedUser = data.user;
     setSuccess('Email is updated successfully!');
-    setFormData({... formData, email:newEmail})
+    setFormData({...formData, email: newEmail});
   } catch (err: unknown) {
     setError('Failed to save email');
+    if (err instanceof Error) {
+      setSettingsError(err.message);
+    }
   } finally {
     setIsEmailLoading(false);
   }
-
 };
 
 
@@ -423,50 +408,7 @@ export default function AccountPage({ user }: { user:User }) {
                 </div>
               </div>
 
-              {/* Password Change Section */}
-              <div className="mb-8">
-                <h4 className="text-md font-medium text-white mb-4">Change Password</h4>
-                <div className="space-y-4">
-                  <div>
-                    <label htmlFor="newPassword" className="block text-sm font-medium text-gray-300 mb-1">
-                      New Password
-                    </label>
-                    <input
-                      id="newPassword"
-                      type={showPassword ? 'text' : 'password'}
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="w-full bg-[#001a33] border border-[#00bfff] rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-[#00bfff]"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-300 mb-1">
-                      Confirm New Password
-                    </label>
-                    <input
-                      id="confirmPassword"
-                      type={showPassword ? 'text' : 'password'}
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="w-full bg-[#001a33] border border-[#00bfff] rounded-md py-2 px-3 text-white focus:outline-none focus:ring-1 focus:ring-[#00bfff]"
-                      required
-                    />
-                  </div>
-
-                  <div className="pt-2">
-                    <button
-                      onClick={handleChangePassword}
-                      disabled={isPasswordLoading}
-                      className={`w-full py-2 px-4 rounded-md text-white font-medium ${isPasswordLoading ? 'bg-gray-600 cursor-not-allowed' : 'bg-[#00bfff] hover:bg-[#0086b3]'}`}
-                    >
-                      {isPasswordLoading ? 'Updating...' : 'Change Password'}
-                    </button>
-                  </div>
-                </div>
-              </div>
-
+              
               {/* Email Change Section */}
               <div>
                 <h4 className="text-md font-medium text-white mb-4">Change Email</h4>
@@ -505,16 +447,55 @@ export default function AccountPage({ user }: { user:User }) {
           </div>
         </div>
       )}
-       {/*About policy */}
-     {isAboutOpen && (
-          <div className="flex-1">
-          <div className="bg-[#001a33] shadow rounded-lg mb-8">
-            <div className="px-6 py-5 border-b border-[#003366]">
-              <h3 className="text-lg font-medium leading-6 text-white">Privacy policy</h3>
-            </div>
-          </div>
-          </div>
-    )}
+     {/* About / Privacy policy */}
+{isAboutOpen && (
+  <div className="flex-1">
+    <div className="bg-[#001a33] shadow rounded-lg mb-8">
+      {/* Header */}
+      <div className="px-6 py-5 border-b border-[#003366]">
+        <h3 className="text-lg font-medium leading-6 text-white">
+          Privacy Policy
+        </h3>
+      </div>
+
+      {/* Policy content */}
+      <div
+        className="px-6 py-6 space-y-6 overflow-y-auto"
+        style={{ maxHeight: "60vh" }}
+      >
+        <h4 className="text-white font-semibold">1. Eligibility</h4>
+        <p className="text-gray-300 text-sm leading-relaxed">
+          <strong>1.1 Age Requirement</strong> — Users must be at least 13 years old to create or access an account. We may request proof of age at any time. Accounts found to belong to individuals under 13 will be terminated and associated data deleted.
+        </p>
+
+        <h4 className="text-white font-semibold">2. Prohibited Conduct</h4>
+        <p className="text-gray-300 text-sm leading-relaxed">
+          <strong>2.1 Harassment & Bullying</strong><br />
+          &nbsp;&nbsp;&bull; Targeted insults, threats, intimidation, doxxing, or any behavior intended to demean, shame, or silence another person is forbidden.<br />
+          &nbsp;&nbsp;&bull; We operate a zero-tolerance approach: content or accounts engaged in harassment are subject to immediate removal.
+        </p>
+        <p className="text-gray-300 text-sm leading-relaxed">
+          <strong>2.2 Self-Harm & Suicide Content</strong><br />
+          &nbsp;&nbsp;&bull; Content that encourages, glorifies, or instructs suicide, self-harm, or eating disorders is strictly prohibited.
+        </p>
+        <p className="text-gray-300 text-sm leading-relaxed">
+          <strong>2.3 Unauthorized Access & “Hacking”</strong><br />
+          &nbsp;&nbsp;&bull; Any attempt to gain unauthorized access to another user’s account, personal data, or our systems—whether through password harvesting, social engineering, malware, or other techniques—violates this policy and may constitute a criminal offense.
+        </p>
+        <p className="text-gray-300 text-sm leading-relaxed">
+          <strong>2.4 Impersonation & Naming Restrictions</strong><br />
+          &nbsp;&nbsp;&bull; Users may not misrepresent their identity. Display names or handles that impersonate real persons, brands, or entities without clear satire or parody disclaimers are subject to removal.
+        </p>
+
+        <h4 className="text-white font-semibold">3. Enforcement</h4>
+        <p className="text-gray-300 text-sm leading-relaxed">
+          <strong>3.1 Moderation Actions</strong> — Violations may result in content removal, temporary suspension, permanent account termination, or referral to law enforcement. Moderation decisions are final unless successfully appealed.
+        </p>
+      </div>
+    </div>
+  </div>
+)}
+
 
 {isNotificationOpen && (
           <div className="flex-1">

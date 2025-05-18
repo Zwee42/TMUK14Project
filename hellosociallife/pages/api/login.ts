@@ -4,8 +4,9 @@ import { serialize } from 'cookie';
 import dbConnect from '@/lib/mongodb';
 import { User } from '@/models/User';
 import bcrypt from 'bcryptjs';
+import { signCookie } from '@/utils/auth';
 
-const SECRET_KEY = process.env.JWT_SECRET || 'default_secret'; // fallback for tests
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -34,23 +35,9 @@ export default async function handler(
       return res.status(400).json({ message: 'Invalid credentials' });
     }
 
-    // Create JWT token
-    const token = jwt.sign({
-      userId: user.id,
-      username: user.username,
-      email: user.email,
-      avatar: user.image,
-      bio: user.bio
-    }, SECRET_KEY, { expiresIn: '1h' });
-
-    // Set the token in an HTTP-only cookie
-    res.setHeader('Set-Cookie', serialize('auth_token', token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
-      path: '/',
-      maxAge: 3600,
-    }));
+    // token pointer
+    signCookie(user, res);
+    
 
     return res.status(200).json({ message: 'Logged in successfully' });
 
