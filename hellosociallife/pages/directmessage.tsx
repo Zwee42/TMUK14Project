@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from 'react';
 import { GetServerSideProps } from 'next';
-import io, { Socket } from 'socket.io-client';
+import io from 'socket.io-client';
+import type { Socket } from 'socket.io-client';
 import { requireAuth } from '@/utils/auth';
 
 interface User {
@@ -29,7 +30,7 @@ export default function DirectMessagesPage({ user }: { user: User }) {
   const [users, setUsers] = useState<User[]>([]);
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const chatRef = useRef<HTMLDivElement>(null);
-  const socketRef = useRef<Socket | null>(null);
+  const socketRef = useRef<typeof Socket | null>(null);
 
   useEffect(() => {
     socketRef.current = io('', { path: '/api/socketio' });
