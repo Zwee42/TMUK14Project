@@ -2,11 +2,8 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import dbConnect from '@/lib/mongodb';
 import { User } from '@/models/User';
-import jwt from 'jsonwebtoken';
 import { getUserFromRequest, signCookie } from '@/utils/auth';
-import { serialize } from 'cookie';
 import bcrypt from 'bcryptjs';
-import { UserModel } from '@/models/User';
 
 type Data = {
   message: string;
@@ -14,8 +11,6 @@ type Data = {
     email: string;
   };
 };
-
-
 
 export default async function handler(
   req: NextApiRequest,
@@ -45,7 +40,7 @@ export default async function handler(
 
     const user = await User.findById(sessionUser.userId);
     if (!user) {
-      return res.status(404).json({ message: 'User not found' });
+      return res.status(400).json({ message: 'Invalid email format' });
     }
     console.log(user);
     // Verify current password
@@ -66,7 +61,7 @@ export default async function handler(
       return res.status(409).json({ message: 'Email already in use' });
     }
 
-   // ----- RÄTT KOD -----
+   
     const updatedUser = await User.findOneAndUpdate(
         sessionUser.userId,
         { email : newEmail },
@@ -76,7 +71,7 @@ export default async function handler(
          return res.status(404).json({ message: 'User update failed' });
     }
 
-    console.log(updatedUser);
+    console.log(updatedUser)
     signCookie (updatedUser, res);
    
 
