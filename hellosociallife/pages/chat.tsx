@@ -94,7 +94,26 @@ export default function ChatPage({ user }: { user: any }) {
         >
           Send
         </button>
+
+        
+    
+    
       </div>
+
+
+      <button
+           onClick =  {() => window.location.href = "/chat_option"}
+
+     className="absolute top-4 left-4 px-6 py-3 text-base bg-[#000814] text-[#00bfff] border-2 border-[#00bfff] rounded-xl shadow-[0_0_20px_rgba(0,191,255,0.6)] hover:bg-[#001d3d] transition-all duration-300"
+      > Return </button>
+
+
+
+
     </div>
+
+
+
+
   );
 }
