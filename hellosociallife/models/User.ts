@@ -37,7 +37,7 @@ const UserSchema = new Schema<IUserDocument>({
   password: {
     type: String,
     required: true,
-    select: false, // Password won't be returned in queries by default
+    select: true, 
     minlength: 8,
     validate: {
       validator: function(v: string) {
@@ -72,6 +72,7 @@ UserSchema.methods.comparePassword = async function(candidatePassword: string): 
 
 // 3. Create User Class with MongoDB Integration
 export class User {
+    [x: string]: any;
   private _id?: mongoose.Types.ObjectId;
   private _username: string;
   private _email: string;
@@ -152,6 +153,13 @@ export class User {
     if (!doc) return null;
     return User.fromDocument(doc);
   }
+  
+  public static async findByIdWithPassword(id: string) {
+  const doc = await UserModel.findById(id).select('+password');
+  if (!doc) return null;
+  return User.fromDocument(doc);
+}
+
 
   public static async findOne(emailOrUsername: string): Promise<User | null> {
     const UserModel = mongoose.model<IUserDocument>('User');
@@ -194,14 +202,17 @@ export class User {
       // Never include password in toObject output
     };
   }
-  // Add this to your User class (inside the class definition)
+  
 public static async findOneAndUpdate(
- userId: string, updates: {
+ userId: string, 
+ updates: {
   username?: string;
   email?: string;
   bio?: string;
   image?: string;
-}): Promise<User | null> {
+},
+options: {new: boolean}
+): Promise<User | null> {
   const UserModel = mongoose.model<IUserDocument>('User');
   
   // Validate updates
@@ -223,7 +234,7 @@ public static async findOneAndUpdate(
   }
 
   const updatedDoc = await UserModel.findOneAndUpdate(
-    { userId },
+    { _id: new mongoose.Types.ObjectId (userId) },
     updatesToApply,
     { 
       new: true,
@@ -236,6 +247,8 @@ public static async findOneAndUpdate(
   return User.fromDocument(updatedDoc);
 }
 }
+
+
 
 // 4. Create Mongoose Model
 export const UserModel = mongoose.models.User || mongoose.model<IUserDocument>('User', UserSchema);
