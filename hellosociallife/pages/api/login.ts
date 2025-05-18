@@ -1,12 +1,12 @@
+
 import type { NextApiRequest, NextApiResponse } from 'next';
 import jwt from 'jsonwebtoken';
 import { serialize } from 'cookie';
 import dbConnect from '@/lib/mongodb';
 import { UserModel } from '@/models/User';
 import bcrypt from 'bcryptjs';
-import { signCookie } from '@/utils/auth';
 
-
+const SECRET_KEY = process.env.JWT_SECRET || 'default_secret'; // fallback for tests
 
 export default async function handler(
   req: NextApiRequest,
@@ -37,9 +37,21 @@ export default async function handler(
       return res.status(401).json({ message: 'Invalid ddcredentials' });
     }
 
-    // token pointer
-    signCookie(user, res);
-    
+    const token = jwt.sign({
+      userId: user.id,
+      username: user.username,
+      email: user.email,
+      avatar: user.image,
+      bio: user.bio
+    }, SECRET_KEY, { expiresIn: '1h' });
+
+    res.setHeader('Set-Cookie', serialize('auth_token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      path: '/',
+      maxAge: 3600,
+    }));
 
     return res.status(200).json({ message: 'Logged in successfully' });
 
