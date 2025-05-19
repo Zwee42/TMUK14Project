@@ -1,12 +1,13 @@
-/** @type {import('ts-jest').JestConfigWithTsJest} */
-module.exports = {
+// jest.config.js
+
+const config = {
   preset: 'ts-jest/presets/js-with-babel',
   testEnvironment: 'jsdom',
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/$1',
     '^@pages/(.*)$': '<rootDir>/pages/$1',
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
@@ -14,9 +15,10 @@ module.exports = {
   collectCoverageFrom: [
     'pages/**/*.{ts,tsx}',
     'components/**/*.{ts,tsx}',
-    '!pages/_*.{ts,tsx}',       // Ignore _app.tsx, _document.tsx
-    // '!pages/api/**',            // Ignore API routes
-    '!**/*.test.{ts,tsx}',      // Ignore test files
+    '!pages/_*.{ts,tsx}',
+    '!**/*.test.{ts,tsx}',
   ],
   coverageReporters: ['text', 'lcov'],
+
 };
+export default config;
