@@ -1,42 +1,47 @@
 /**
- * @jest-environment jsdom
+ * @file __tests__/VoiceChat.test.tsx
  */
 
 import React from 'react';
 import { render, screen, waitFor } from '@testing-library/react';
-import VoiceChat from '@/components/VoiceChat';
+import '@testing-library/jest-dom';
+import VoiceChat from '@/components/VoiceChat'; // justera sökvägen om nödvändigt
+import { EventEmitter } from 'events';
 
-// Mock för navigator.mediaDevices.getUserMedia
+// ───────────────────────────────────────────────────────────
+// Mock: socket.io-client  → returnerar en egen EventEmitter
+// ───────────────────────────────────────────────────────────
+jest.mock('socket.io-client', () => {
+  const { EventEmitter } = require('events');   // ⬅️ måste ligga inne i fabriken
+  const emitter = new EventEmitter();
+  (emitter as any).id = 'socket-123';           // fejkad socket.id
+  // Lägg till no-op på -off för säkerhet
+  if (!(emitter as any).off) (emitter as any).off = emitter.removeListener;
+
+  return () => emitter;                         // default-exporten är en fabrik
+});
+
+// ───────────────────────────────────────────────────────────
+// Mock: getUserMedia  → ger oss en fejkad MediaStream
+// ───────────────────────────────────────────────────────────
 beforeAll(() => {
+  // Enkel stub för MediaStream
+  // @ts-ignore – vi skapar bara ett minimalt objekt
+  global.MediaStream = class {
+    private tracks: MediaStreamTrack[] = [];
+    getTracks() {
+      return this.tracks;
+    }
+    addTrack(track: MediaStreamTrack) {
+      this.tracks.push(track);
+    }
+  };
+
   Object.defineProperty(navigator, 'mediaDevices', {
+    writable: true,
     value: {
-      getUserMedia: jest.fn(() => Promise.resolve(new MediaStream())),
+      getUserMedia: jest.fn().mockResolvedValue(new MediaStream()),
     },
-    configurable: true,
-  });
-
-  // Mocka RTCPeerConnection som klass med statisk generateCertificate-metod
-  class MockRTCPeerConnection {
-    addTrack = jest.fn();
-    createOffer = jest.fn(() => Promise.resolve({ type: 'offer', sdp: 'fake sdp' }));
-    setLocalDescription = jest.fn(() => Promise.resolve());
-    setRemoteDescription = jest.fn(() => Promise.resolve());
-    createAnswer = jest.fn(() => Promise.resolve({ type: 'answer', sdp: 'fake sdp answer' }));
-    addIceCandidate = jest.fn(() => Promise.resolve());
-    close = jest.fn();
-    localDescription = { type: 'offer', sdp: 'fake sdp' };
-    onicecandidate: ((ev: any) => void) | null = null;
-    ontrack: ((ev: any) => void) | null = null;
-  }
-  (MockRTCPeerConnection as any).generateCertificate = jest.fn(() => Promise.resolve({}));
-
-  // Sätt global RTCPeerConnection till mocken
-  (global as any).RTCPeerConnection = MockRTCPeerConnection;
-
-  // Mocka audio element srcObject property
-  Object.defineProperty(window.HTMLMediaElement.prototype, 'srcObject', {
-    configurable: true,
-    set() {},
   });
 });
 
@@ -44,18 +49,29 @@ afterAll(() => {
   jest.resetAllMocks();
 });
 
-test('renders VoiceChat component and shows status', async () => {
-  render(<VoiceChat roomId="test-room" />);
+// ───────────────────────────────────────────────────────────
+// Testar att komponenten renderar och initierar
+// ───────────────────────────────────────────────────────────
+describe('<VoiceChat />', () => {
+  it('initialiseras och visar grund-UI', async () => {
+    render(<VoiceChat roomId="test-room" />);
 
-  // Vänta på att status texten dyker upp
-  await waitFor(() => expect(screen.getByText(/Voice Chat:/)).toBeInTheDocument());
+    // Status börjar som "Initializing..."
+    expect(
+      screen.getByText(/Voice Chat: Initializing/i)
+    ).toBeInTheDocument();
 
-  // Kontrollera att "Voice Chat:" och någon status finns
-  expect(screen.getByText(/Voice Chat:/)).toBeTruthy();
+    // Vänta tills status uppdateras efter getUserMedia-löftet
+    await waitFor(() =>
+      expect(
+        screen.getByText(/Voice Chat: Voice chat ready\./i)
+      ).toBeInTheDocument()
+    );
 
-  // Kontrollera att username visas
-  await waitFor(() => expect(screen.getByText(/You are:/)).toBeInTheDocument());
+    // Kontrollera att vårt användarnamn syns (slumpat, men ska finnas text "You are:")
+    expect(screen.getByText(/You are:/i)).toBeInTheDocument();
 
-  // Kontrollera att connected users visas (bör vara 0 initialt)
-  expect(screen.getByText(/Connected users:/)).toBeTruthy();
+    // Inga connected users ännu
+    expect(screen.getByText(/Connected users: 0/i)).toBeInTheDocument();
+  });
 });
