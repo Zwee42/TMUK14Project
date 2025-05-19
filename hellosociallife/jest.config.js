@@ -19,6 +19,12 @@ const config = {
     '!**/*.test.{ts,tsx}',
   ],
   coverageReporters: ['text', 'lcov'],
+  //setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+
 };
+
+
+
+
 
 export default config;
