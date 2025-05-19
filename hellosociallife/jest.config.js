@@ -7,7 +7,7 @@ const config = {
     '^@/(.*)$': '<rootDir>/$1',
     '^@pages/(.*)$': '<rootDir>/pages/$1',
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.js'],
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   transform: {
     '^.+\\.(js|jsx|ts|tsx)$': 'babel-jest',
   },
@@ -19,7 +19,6 @@ const config = {
     '!**/*.test.{ts,tsx}',
   ],
   coverageReporters: ['text', 'lcov'],
-  //setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
 
 };
 export default config;
