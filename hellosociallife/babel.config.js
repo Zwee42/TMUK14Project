@@ -1,4 +1,4 @@
 // babel.config.js
-export default {
+module.exports = {
   presets: ['next/babel'],
 };
