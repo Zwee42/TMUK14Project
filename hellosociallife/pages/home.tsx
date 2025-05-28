@@ -6,6 +6,12 @@ export const getServerSideProps: GetServerSideProps = async (ctx) => {
   return await requireAuth(ctx) || { redirect: { destination: '/', permanent: false } };
 };
 
+export interface HomeProps {
+  user: {
+    username: string;
+  };
+}
+
 const handleLogout = async () => {
   try {
     const res = await fetch('/api/logout', {
@@ -23,7 +29,7 @@ const handleAccount = () => {
   window.location.href = "/account";
 };
 
-export default function Home({ user }: any) {
+export default function Home({ user }: HomeProps ) {
   return (
     <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-[#000814] via-[#000d1a] to-[#001a33] text-gray-200 p-8 relative">
 
