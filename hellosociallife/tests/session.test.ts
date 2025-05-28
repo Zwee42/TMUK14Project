@@ -30,7 +30,7 @@ describe('API handler', () => {
     const userPayload = {
       userId: 'abc123',
       username: 'testuser',
-      avtar: 'avatar.png',
+      avatar: 'avatar.png',
       bio: 'A bio',
       email: 'test@example.com',
     };
