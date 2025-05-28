@@ -40,14 +40,15 @@ describe('Nonfunctional tests for DELETE /api/user/delete', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+    jest.restoreAllMocks();
   });
 
   it('sets appropriate headers (if any) and completes within 100ms', async () => {
     (UserModel.findOneAndDelete as jest.Mock).mockResolvedValue({ email: 'test@example.com' });
 
-    const start = Date.now();
+    const start = performance.now();
     await handler(req as NextApiRequest, res as NextApiResponse);
-    const duration = Date.now() - start;
+    const duration = performance.now() - start;
 
     // Check that no unexpected headers are set (or if your handler sets some, check them here)
     expect(setHeaderMock).not.toHaveBeenCalled();
