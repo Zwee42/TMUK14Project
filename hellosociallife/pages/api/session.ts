@@ -4,7 +4,6 @@ import jwt from 'jsonwebtoken';
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const cookie = req.headers.cookie || '';
 
-
   const authToken = cookie
     .split(';')
     .find((c) => c.trim().startsWith('auth_token='));
